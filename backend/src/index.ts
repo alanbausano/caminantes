@@ -47,9 +47,16 @@ app.get('/', (req, res) => {
   res.send('El API de Burger Loyalty está funcionando con éxito');
 });
 
-// Forzamos a que escuche en '0.0.0.0' para que Railway lo encuentre
-const server = app.listen(Number(port), '0.0.0.0', () => {
-  console.log(`Server is running on port ${port}`);
+// Log de diagnóstico al arrancar
+console.log('--- DIAGNÓSTICO DE ARRANQUE ---');
+console.log('DATABASE_URL configurada:', process.env.DATABASE_URL ? 'SÍ (Ok)' : 'NO (ERROR)');
+console.log('JWT_SECRET configurado:', process.env.JWT_SECRET ? 'SÍ (Ok)' : 'NO (ERROR)');
+console.log('GOOGLE_CLIENT_ID configurado:', process.env.GOOGLE_CLIENT_ID ? 'SÍ (Ok)' : 'NO (ERROR)');
+console.log('Puerto asignado:', port);
+console.log('-------------------------------');
+
+const server = app.listen(Number(port), () => {
+  console.log(`Server is running successfully on port ${port}`);
 });
 
 server.on('error', (err: any) => {
