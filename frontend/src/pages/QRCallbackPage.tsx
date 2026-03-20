@@ -42,9 +42,6 @@ export default function QRCallbackPage() {
         <Typography variant="h5" color="text.primary" sx={{ mt: 4 }}>
           Procesando tu visita...
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Código: {id}
-        </Typography>
       </Box>
     </Container>
   );

@@ -20,17 +20,32 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScan
       if (open && videoRef.current) {
         try {
           setError(null);
-          // null uses the default video device
-          codeReader.current.decodeFromVideoDevice(null, videoRef.current, (result) => {
+          
+          // Using constraints is more reliable for mobile browsers to pick the back camera
+          const constraints: MediaStreamConstraints = {
+            video: { facingMode: 'environment' }
+          };
+
+          const ctrl = await codeReader.current.decodeFromConstraints(constraints, videoRef.current, (result) => {
             if (result) {
               onScanSuccess(result.getText());
             }
-          }).then(ctrl => {
-            controls = ctrl;
           });
+          controls = ctrl;
         } catch (e) {
-          console.error('Camera error:', e);
-          setError('No pudimos acceder a la cámara. Verificá los permisos de tu navegador.');
+          console.error('Camera error with constraints:', e);
+          try {
+            // Fallback to default device if constraints fail
+            const ctrl = await codeReader.current.decodeFromVideoDevice(null, videoRef.current, (result) => {
+              if (result) {
+                onScanSuccess(result.getText());
+              }
+            });
+            controls = ctrl;
+          } catch (fallbackError) {
+            console.error('Fallback camera error:', fallbackError);
+            setError('No pudimos acceder a la cámara. Verificá los permisos de tu navegador y que estés usando HTTPS.');
+          }
         }
       }
     };
@@ -39,7 +54,7 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScan
 
     return () => {
       if (controls) {
-        // ZXing doesn't always handle cleanup perfectly in React without reset
+        // Some versions of ZXing need explicit stop via controls or reset
       }
       codeReader.current.reset();
     };
@@ -80,6 +95,9 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScan
         }}>
           <video 
             ref={videoRef} 
+            playsInline
+            muted
+            autoPlay
             style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
           />
           

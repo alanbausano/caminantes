@@ -55,8 +55,8 @@ export default function CouponTracker({ visits, targetVisits }: CouponTrackerPro
               }}
               transition={{ duration: 0.5, ease: "easeOut" }}
               sx={{
-                width: 48,
-                height: 48,
+                width: { xs: 42, sm: 48 },
+                height: { xs: 42, sm: 48 },
                 borderRadius: '50%',
                 display: 'flex',
                 justifyContent: 'center',

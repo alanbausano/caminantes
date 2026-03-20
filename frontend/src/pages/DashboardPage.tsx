@@ -42,18 +42,23 @@ export default function DashboardPage() {
   const firstName = userData?.firstName || 'Invitado';
 
   return (
-    <Container maxWidth="sm" sx={{ pt: 4, pb: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Container maxWidth="sm" sx={{ 
+      py: { xs: 2, sm: 4 }, 
+      display: 'flex', 
+      flexDirection: 'column', 
+      flex: 1,
+      gap: { xs: 1.5, sm: 2 }
+    }}>
       <Box 
         component={motion.div}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        sx={{ mb: 4 }}
       >
-        <Typography variant="h4" color="primary" gutterBottom sx={{ fontWeight: 800 }}>
+        <Typography variant="h4" color="primary" gutterBottom sx={{ fontWeight: 800, fontSize: { xs: '1.75rem', sm: '2.125rem' } }}>
           ¡Hola, {firstName}! 👋
         </Typography>
-        <Typography variant="subtitle1" color="text.secondary">
+        <Typography variant="subtitle1" color="text.secondary" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
           ¿Estás listo para otra burger?
         </Typography>
       </Box>
@@ -64,7 +69,12 @@ export default function DashboardPage() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2, duration: 0.6 }}
         elevation={24} 
-        sx={{ p: 3, mb: 4, borderRadius: 2, bgcolor: 'background.paper' }}
+        sx={{ 
+          p: { xs: 2, sm: 3 }, 
+          borderRadius: 2, 
+          bgcolor: 'background.paper',
+          flexShrink: 0
+        }}
       >
         <CouponTracker visits={visitsCount} targetVisits={targetVisits} />
       </Paper>
@@ -74,7 +84,7 @@ export default function DashboardPage() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.5 }}
-        sx={{ mt: 'auto', mb: 2 }}
+        sx={{ mt: 'auto' }}
       >
         <Button
           fullWidth
@@ -84,9 +94,10 @@ export default function DashboardPage() {
           startIcon={<QrCodeScannerIcon />}
           onClick={() => setScannerOpen(true)}
           sx={{
-            py: 2,
+            py: { xs: 1.5, sm: 2 },
             fontSize: '1.1rem',
-            color: '#1A1A1A'
+            color: '#1A1A1A',
+            borderRadius: 2
           }}
         >
           Escaneá el código

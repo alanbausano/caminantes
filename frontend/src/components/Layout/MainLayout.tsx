@@ -32,8 +32,16 @@ export default function MainLayout() {
   };
 
   return (
-    <Box sx={{ pb: 7, height: '100vh', overflowY: 'auto' }}>
-      <Outlet />
+    <Box sx={{ 
+      pb: { xs: 7, sm: 8 }, 
+      minHeight: '100dvh', 
+      display: 'flex', 
+      flexDirection: 'column',
+      bgcolor: 'background.default'
+    }}>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Outlet />
+      </Box>
       
       <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1000 }} elevation={3}>
         <BottomNavigation
