@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import QRCodeLib from 'react-qr-code';
 import { Container, Box, Typography, Paper, CircularProgress } from '@mui/material';
 import { motion } from 'framer-motion';
+import logo from '../assets/logo.png';
 
 // Handle commonjs interop for Vite/NodeNext
 const QRCode = (QRCodeLib as unknown as { default?: typeof QRCodeLib }).default || QRCodeLib;
@@ -54,6 +55,26 @@ export default function AdminDashboardPage() {
           maxWidth: 500
         }}
       >
+        <Box
+          component={motion.div}
+          animate={{ rotate: [0, 2, -2, 0] }}
+          transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut' }}
+          sx={{
+            width: 160,
+            height: 160,
+            borderRadius: '50%',
+            bgcolor: 'white',
+            border: '5px solid #FFC107',
+            boxShadow: '0 0 40px rgba(255, 193, 7, 0.6), 0 0 80px rgba(255, 193, 7, 0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 1.5,
+            mb: 2,
+          }}
+        >
+          <Box component="img" src={logo} alt="Los Caminantes" sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        </Box>
         <Typography variant="h3" color="primary" gutterBottom sx={{ fontWeight: 800 }}>
           Scanner Los Caminantes
         </Typography>

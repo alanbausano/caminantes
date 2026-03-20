@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Typography, Container, Box, Button, TextField, Paper, Tabs, Tab, CircularProgress } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import heroBurger from '../assets/hero_burger.png';
+import logo from '../assets/logo.png';
 import { useToast } from '../context/ToastContext';
 import { useRegister, useLogin } from '../hooks/useAuth';
 import type { AxiosError } from 'axios';
 
 export default function LandingPage() {
-  const [tab, setTab] = useState(0); // 0: Login, 1: Register
+  const [tab, setTab] = useState(1); // 0: Login, 1: Register
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -169,20 +169,30 @@ export default function LandingPage() {
           Sumate a nuestro club y ganá hamburguesas gratis.
         </Typography>
         <Box
-          component={motion.img}
-          src={heroBurger}
-          alt="Hamburguesa Deliciosa"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
-          sx={{
-            width: '100%',
-            maxWidth: '320px',
-            borderRadius: '24px',
-            boxShadow: '0px 20px 40px rgba(0,0,0,0.5)',
-            border: '2px solid rgba(255,255,255,0.05)',
+          component={motion.div}
+          initial={{ scale: 0.85, opacity: 0, rotate: -5 }}
+          animate={{ scale: 1, opacity: 1, rotate: [0, 2, -2, 0] }}
+          transition={{
+            scale: { delay: 0.2, duration: 0.8, type: 'spring', stiffness: 80 },
+            opacity: { delay: 0.2, duration: 0.8 },
+            rotate: { delay: 1, duration: 5, ease: 'easeInOut', repeat: Infinity }
           }}
-        />
+          sx={{
+            width: 220,
+            height: 220,
+            borderRadius: '50%',
+            bgcolor: 'white',
+            border: '4px solid #FFC107',
+            boxShadow: '0 0 40px rgba(255, 193, 7, 0.5), 0 0 80px rgba(255, 193, 7, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 1.5,
+            mx: 'auto',
+          }}
+        >
+          <Box component="img" src={logo} alt="Los Caminantes Burger" sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        </Box>
       </Box>
 
       {/* Auth Form */}
@@ -277,6 +287,7 @@ export default function LandingPage() {
                   helperText={formErrors.dob}
                   value={formData.dob}
                   onChange={handleInputChange}
+                  inputProps={{ style: { textAlign: 'left' } }}
                 />
               )}
               <TextField 
@@ -303,6 +314,46 @@ export default function LandingPage() {
           >
             {loading ? <CircularProgress size={24} sx={{ color: '#1A1A1A' }} /> : (tab === 0 ? 'Ingresá' : 'Sumate ahora')}
           </Button>
+
+          <Box sx={{ mt: 3, textAlign: 'center' }}>
+            {tab === 1 ? (
+              <Typography variant="body2" color="text.secondary">
+                ¿Ya sos parte del club?{' '}
+                <Typography 
+                  component="span"
+                  variant="body2"
+                  onClick={() => setTab(0)} 
+                  sx={{ 
+                    color: 'primary.main',
+                    fontWeight: 'bold', 
+                    cursor: 'pointer',
+                    ml: 0.5,
+                    '&:hover': { textDecoration: 'underline' }
+                  }}
+                >
+                  Entrá acá
+                </Typography>
+              </Typography>
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                ¿Todavía no tenés tu cuenta?{' '}
+                <Typography 
+                  component="span"
+                  variant="body2"
+                  onClick={() => setTab(1)} 
+                  sx={{ 
+                    color: 'primary.main',
+                    fontWeight: 'bold', 
+                    cursor: 'pointer',
+                    ml: 0.5,
+                    '&:hover': { textDecoration: 'underline' }
+                  }}
+                >
+                  Registrate y ganá
+                </Typography>
+              </Typography>
+            )}
+          </Box>
         </Box>
       </Paper>
     </Container>

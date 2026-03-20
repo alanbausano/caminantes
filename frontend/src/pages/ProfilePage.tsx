@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useProfile } from '../hooks/useVisits';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: userData, isLoading } = useProfile();
 
   if (isLoading) {
@@ -17,8 +19,8 @@ export default function ProfilePage() {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.clear(); // Wipe all stored data (token, user, etc.)
+    queryClient.clear();  // Clear React Query cache so no stale data persists
     navigate('/');
   };
 

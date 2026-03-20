@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Alert } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box, Alert } from '@mui/material';
 import { BrowserQRCodeReader } from '@zxing/library';
 
 interface QRScannerDialogProps {
@@ -157,16 +157,19 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScan
           Apuntá tu cámara al código QR del local para anotar tu visita.
         </Typography>
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center', pb: 3, px: 3 }}>
-        <Button 
-          onClick={onClose} 
-          fullWidth
-          variant="outlined"
-          color="inherit" 
-          sx={{ borderRadius: 2, py: 1, fontWeight: 'bold' }}
+      <DialogActions sx={{ justifyContent: 'center', pb: 3, pt: 0 }}>
+        <Typography 
+          variant="body2" 
+          onClick={onClose}
+          sx={{ 
+            color: 'text.secondary', 
+            cursor: 'pointer', 
+            fontWeight: 'bold',
+            '&:hover': { color: 'text.primary' }
+          }}
         >
           Cancelar
-        </Button>
+        </Typography>
       </DialogActions>
     </Dialog>
   );

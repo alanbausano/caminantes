@@ -4,6 +4,7 @@ import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import CouponTracker from '../components/Loyalty/CouponTracker';
 import QRScannerDialog from '../components/Scanner/QRScannerDialog';
 import { motion } from 'framer-motion';
+import logo from '../assets/logo.png';
 import { useToast } from '../context/ToastContext';
 import { useProfile, useScanVisit } from '../hooks/useVisits';
 import type { AxiosError } from 'axios';
@@ -16,7 +17,6 @@ export default function DashboardPage() {
   const targetVisits = 10;
 
   const handleScanSuccess = async (code: string) => {
-    console.log("Scanned code:", code);
     setScannerOpen(false);
     
     scanMutation.mutate(code, {
@@ -49,18 +49,41 @@ export default function DashboardPage() {
       flex: 1,
       gap: { xs: 1.5, sm: 2 }
     }}>
-      <Box 
+      <Box
         component={motion.div}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
+        sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
       >
-        <Typography variant="h4" color="primary" gutterBottom sx={{ fontWeight: 800, fontSize: { xs: '1.75rem', sm: '2.125rem' } }}>
-          ¡Hola, {firstName}! 👋
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
-          ¿Estás listo para otra burger?
-        </Typography>
+        <Box
+          component={motion.div}
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+          sx={{
+            width: 64,
+            height: 64,
+            borderRadius: '50%',
+            bgcolor: 'white',
+            border: '3px solid #FFC107',
+            boxShadow: '0 0 16px rgba(255, 193, 7, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 0.75,
+            flexShrink: 0,
+          }}
+        >
+          <Box component="img" src={logo} alt="Logo" sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        </Box>
+        <Box>
+          <Typography variant="h4" color="primary" gutterBottom sx={{ fontWeight: 800, fontSize: { xs: '1.75rem', sm: '2.125rem' }, mb: 0 }}>
+            ¡Hola, {firstName}! 👋
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+            ¿Estás listo para otra burger?
+          </Typography>
+        </Box>
       </Box>
 
       <Paper 
