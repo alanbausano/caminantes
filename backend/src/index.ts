@@ -37,8 +37,19 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Log every request for debugging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/visits', visitRoutes);
+
+// Add a specific health check route for Railway
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 // Start cron jobs
 initBirthdayCron();
