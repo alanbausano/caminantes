@@ -20,16 +20,22 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
     
-    const isLocalhost = origin.startsWith('http://localhost:') || origin.startsWith('https://localhost:');
-    const isVercel = origin.endsWith('.vercel.app');
-    const isAllowed = allowedOrigins.includes(origin);
+    // Normalize origin (remove trailing slash for comparison)
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    
+    const isLocalhost = normalizedOrigin.startsWith('http://localhost:') || normalizedOrigin.startsWith('https://localhost:');
+    const isVercel = normalizedOrigin.endsWith('.vercel.app');
+    
+    // Check if it's in our explicit allowed list (also normalized)
+    const isAllowed = allowedOrigins.some(o => o.replace(/\/$/, '') === normalizedOrigin);
 
     if (isLocalhost || isVercel || isAllowed) {
       callback(null, true);
     } else {
-      console.warn(`CORS blocked for origin: ${origin}`);
+      console.warn(`CORS blocked for origin: ${origin} (Normalized: ${normalizedOrigin})`);
       callback(new Error('CORS not allowed'), false);
     }
   },
