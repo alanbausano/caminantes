@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Typography, Container, Box, Button, TextField, Paper, Tabs, Tab, CircularProgress } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import heroBurger from '../assets/hero_burger.png';
@@ -11,6 +11,9 @@ export default function LandingPage() {
   const [tab, setTab] = useState(0); // 0: Login, 1: Register
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const qrId = searchParams.get('qrId') || undefined;
+
   const registerMutation = useRegister();
   const loginMutation = useLogin();
   
@@ -117,7 +120,7 @@ export default function LandingPage() {
     if (!validateForm()) return;
 
     if (tab === 1) { // Register
-      registerMutation.mutate(formData, {
+      registerMutation.mutate({ ...formData, qrId }, {
         onSuccess: () => {
           showToast('¡Cuenta creada con éxito!', 'success');
           navigate('/dashboard');
@@ -133,7 +136,8 @@ export default function LandingPage() {
     } else { // Login
       loginMutation.mutate({
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+        qrId
       }, {
         onSuccess: () => {
           showToast('¡Qué bueno verte de nuevo!', 'success');

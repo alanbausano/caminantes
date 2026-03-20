@@ -12,7 +12,16 @@ export default function QRCallbackPage() {
   const scanMutation = useScanVisit();
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    
     if (id) {
+      if (!token) {
+        // Redirect to landing page with the QR ID to handle it after login/register
+        showToast('¡Ingresá para registrar tu visita!', 'info');
+        navigate(`/?qrId=${id}`, { replace: true });
+        return;
+      }
+
       scanMutation.mutate(id, {
         onSuccess: () => {
           showToast('Registramos tu visita con éxito!', 'success');

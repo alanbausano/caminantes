@@ -13,4 +13,5 @@ export interface GoogleAuthRequest {
   token: string;
   phone?: string;
   dob?: string;
+  qrId?: string;
 }

@@ -1,5 +1,6 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box } from '@mui/material';
-import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
+import { useEffect, useRef, useState } from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Alert } from '@mui/material';
+import { BrowserQRCodeReader } from '@zxing/library';
 
 interface QRScannerDialogProps {
   open: boolean;
@@ -8,42 +9,120 @@ interface QRScannerDialogProps {
 }
 
 export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScannerDialogProps) {
-  // Mock logic to simulate a successful scan
-  const simulateScan = () => {
-    onScanSuccess('mock-restaurant-code-123');
-  };
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const codeReader = useRef(new BrowserQRCodeReader());
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let controls: any = null;
+
+    const startScanner = async () => {
+      if (open && videoRef.current) {
+        try {
+          setError(null);
+          // null uses the default video device
+          codeReader.current.decodeFromVideoDevice(null, videoRef.current, (result) => {
+            if (result) {
+              onScanSuccess(result.getText());
+            }
+          }).then(ctrl => {
+            controls = ctrl;
+          });
+        } catch (e) {
+          console.error('Camera error:', e);
+          setError('No pudimos acceder a la cámara. Verificá los permisos de tu navegador.');
+        }
+      }
+    };
+
+    startScanner();
+
+    return () => {
+      if (controls) {
+        // ZXing doesn't always handle cleanup perfectly in React without reset
+      }
+      codeReader.current.reset();
+    };
+  }, [open, onScanSuccess]);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs" PaperProps={{ sx: { borderRadius: 2, bgcolor: 'background.paper' } }}>
-      <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>Escaneá el código QR</DialogTitle>
-      <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 2 }}>
+    <Dialog 
+      open={open} 
+      onClose={onClose} 
+      fullWidth 
+      maxWidth="xs" 
+      PaperProps={{ sx: { borderRadius: 3, bgcolor: 'background.paper', overflow: 'hidden' } }}
+    >
+      <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold', pt: 3 }}>Escaneá el código QR</DialogTitle>
+      <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 1 }}>
+        
+        {error && (
+          <Alert severity="error" sx={{ mb: 2, width: '100%', borderRadius: 2 }}>
+            {error}
+          </Alert>
+        )}
+
         <Box sx={{ 
           width: '100%', 
-          height: 250, 
+          aspectRatio: '1/1',
+          maxHeight: 300,
           bgcolor: '#000', 
-          borderRadius: 2, 
+          borderRadius: 3, 
+          position: 'relative',
+          overflow: 'hidden',
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center', 
-          mb: 3,
-          border: '2px solid rgba(255, 193, 7, 0.3)' // Using yellow accent
+          mb: 2,
+          border: '2px solid',
+          borderColor: 'primary.main',
+          boxShadow: '0 0 20px rgba(255, 193, 7, 0.2)'
         }}>
-          <QrCodeScannerIcon sx={{ fontSize: 60, color: 'primary.main', opacity: 0.5 }} />
-          <Typography variant="caption" sx={{ position: 'absolute', bottom: 50, color: 'text.secondary', opacity: 0.8 }}>
-             [ Vista de la Cámara ]
-          </Typography>
+          <video 
+            ref={videoRef} 
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+          />
+          
+          {/* Scanning frame overlay */}
+          <Box sx={{
+            position: 'absolute',
+            width: '70%',
+            height: '70%',
+            border: '2px solid rgba(255, 255, 255, 0.5)',
+            borderRadius: 2,
+            pointerEvents: 'none',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '2px',
+              bgcolor: 'primary.main',
+              boxShadow: '0 0 10px #FFC107',
+              animation: 'scan 2s infinite ease-in-out',
+            },
+            '@keyframes scan': {
+              '0%': { transform: 'translateY(0)' },
+              '100%': { transform: 'translateY(210px)' }
+            }
+          }} />
         </Box>
-        <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 3 }}>
+
+        <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ px: 2 }}>
           Apuntá tu cámara al código QR del local para anotar tu visita.
         </Typography>
-        
-        {/* TEMPORARY MOCK BUTTON */}
-        <Button variant="outlined" color="primary" onClick={simulateScan} sx={{ borderRadius: 2 }}>
-           Simular Escaneo Exitoso
-        </Button>
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center', pb: 3, pt: 0 }}>
-        <Button onClick={onClose} color="inherit" sx={{ fontWeight: 'bold' }}>Cancelar</Button>
+      <DialogActions sx={{ justifyContent: 'center', pb: 3, px: 3 }}>
+        <Button 
+          onClick={onClose} 
+          fullWidth
+          variant="outlined"
+          color="inherit" 
+          sx={{ borderRadius: 2, py: 1, fontWeight: 'bold' }}
+        >
+          Cancelar
+        </Button>
       </DialogActions>
     </Dialog>
   );

@@ -6,6 +6,8 @@ import { prisma } from '../db.js';
 import type { User, AuthResponse, GoogleAuthRequest } from '../types/auth.js';
 import type { Prisma } from '@prisma/client';
 
+import { recordVisit } from '../services/visitService.js';
+
 const router = express.Router();
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClient = googleClientId ? new OAuth2Client(googleClientId) : null;
@@ -17,7 +19,7 @@ if (!googleClientId) {
 
 router.post('/register', async (req, res) => {
   try {
-    const { firstName, lastName, phone, dob, email, password } = req.body;
+    const { firstName, lastName, phone, dob, email, password, qrId } = req.body;
     
     const userExists = await prisma.user.findUnique({ where: { email } });
     if (userExists) {
@@ -37,6 +39,11 @@ router.post('/register', async (req, res) => {
       } as Prisma.UserCreateInput
     }) as unknown as Promise<User>);
 
+    // If registered via QR, record the first visit
+    if (qrId) {
+      await recordVisit(newUser.id);
+    }
+
     const token = jwt.sign({ id: newUser.id }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, user: newUser } as AuthResponse);
   } catch (error: unknown) {
@@ -48,7 +55,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, qrId } = req.body;
 
     const user = await (prisma.user.findUnique({ where: { email } }) as Promise<User | null>);
     if (!user || !user.password) {
@@ -58,6 +65,11 @@ router.post('/login', async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ error: 'La contraseña que ingresaste no es correcta' });
+    }
+
+    // If logged in via QR, record the visit
+    if (qrId) {
+      await recordVisit(user.id);
     }
 
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' });
@@ -71,7 +83,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/google', async (req, res) => {
   try {
-    const { token, phone, dob } = req.body as GoogleAuthRequest;
+    const { token, phone, dob, qrId } = req.body as GoogleAuthRequest;
     if (!process.env.GOOGLE_CLIENT_ID) {
       throw new Error('GOOGLE_CLIENT_ID is not set in environment');
     }
@@ -112,6 +124,11 @@ router.post('/google', async (req, res) => {
           dob: new Date(dob),
         }
       });
+    }
+
+    // If logged in via QR, record the visit
+    if (qrId) {
+      await recordVisit(user.id);
     }
 
     const jwtToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' });

@@ -33,11 +33,12 @@ export default function CouponTracker({ visits, targetVisits }: CouponTrackerPro
       
       <Box sx={{ 
         display: 'flex', 
-        justifyContent: 'space-between', 
+        justifyContent: 'flex-start', 
         alignItems: 'center',
         flexWrap: 'wrap',
-        gap: 1.5,
-        mt: 2
+        gap: 2,
+        mt: 2,
+        px: 1
       }}>
         {circles.map((i) => {
           const isFilled = i < visits;

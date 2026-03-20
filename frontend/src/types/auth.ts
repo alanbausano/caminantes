@@ -37,9 +37,11 @@ export interface RegisterData {
   phone: string;
   dob: string;
   password?: string;
+  qrId?: string;
 }
 
 export interface LoginData {
   email: string;
   password?: string;
+  qrId?: string;
 }

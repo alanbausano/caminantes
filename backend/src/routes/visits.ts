@@ -2,6 +2,7 @@ import express from 'express';
 import { prisma } from '../db.js';
 import { authenticateToken } from '../middleware/auth.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import { recordVisit } from '../services/visitService.js';
 
 const router = express.Router();
 
@@ -27,37 +28,13 @@ router.get('/me', authenticateToken, async (req: AuthRequest, res) => {
 router.post('/scan', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user!.id;
-    // For MVP, just recording a visit
-    // Can add cooldown logic (e.g., max 1 visit per day) here
-
-    const lastVisit = await prisma.visit.findFirst({
-      where: { userId },
-      orderBy: { timestamp: 'desc' },
-    });
-
-    if (lastVisit) {
-      const hoursSinceLastVisit = (new Date().getTime() - new Date(lastVisit.timestamp).getTime()) / (1000 * 60 * 60);
-      if (hoursSinceLastVisit < 12) {
-        return res.status(400).json({ error: 'Solo podés sumar una visita cada 12 horas.' });
-      }
+    const result = await recordVisit(userId);
+    
+    if ('error' in result) {
+      return res.status(400).json({ error: result.error });
     }
 
-    const newVisit = await prisma.visit.create({
-      data: { userId }
-    });
-    
-    // Check if the user reached 10 visits (or a multiple of 10)
-    const totalVisits = await prisma.visit.count({ where: { userId } });
-    let newCoupon = null;
-    
-    if (totalVisits > 0 && totalVisits % 10 === 0) {
-      // Award a coupon
-      newCoupon = await prisma.coupon.create({
-        data: { userId }
-      });
-    }
-
-    res.json({ newVisit, totalVisits, newCoupon });
+    res.json(result);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Hubo un error en el servidor' });
