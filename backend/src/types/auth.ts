@@ -1,6 +1,6 @@
 import type { User as PrismaUser } from '@prisma/client';
 
-export interface User extends PrismaUser {
+export interface User extends Omit<PrismaUser, 'password'> {
   password?: string | null;
 }
 

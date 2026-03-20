@@ -8,7 +8,7 @@ import type { Prisma } from '@prisma/client';
 
 const router = express.Router();
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 router.post('/register', async (req, res) => {
   try {
