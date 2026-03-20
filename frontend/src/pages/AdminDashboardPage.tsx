@@ -69,7 +69,7 @@ export default function AdminDashboardPage() {
           boxShadow: '0px 10px 30px rgba(0,0,0,0.5)'
         }}>
           {token ? (
-            <QRCode value={`http://localhost:5173/scan/${token}`} size={250} />
+            <QRCode value={`${window.location.origin}/scan/${token}`} size={250} />
           ) : (
             <Box sx={{ width: 250, height: 250, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <CircularProgress color="primary" />
