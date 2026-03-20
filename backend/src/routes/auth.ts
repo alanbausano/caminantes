@@ -7,8 +7,13 @@ import type { User, AuthResponse, GoogleAuthRequest } from '../types/auth.js';
 import type { Prisma } from '@prisma/client';
 
 const router = express.Router();
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClient = googleClientId ? new OAuth2Client(googleClientId) : null;
+const JWT_SECRET = (process.env.JWT_SECRET || 'dev_secret_only') as string;
+
+if (!googleClientId) {
+  console.error('CRITICAL: GOOGLE_CLIENT_ID is not defined in environment variables.');
+}
 
 router.post('/register', async (req, res) => {
   try {
@@ -71,9 +76,13 @@ router.post('/google', async (req, res) => {
       throw new Error('GOOGLE_CLIENT_ID is not set in environment');
     }
 
+    if (!googleClient) {
+      throw new Error('Google OAuth client is not initialized');
+    }
+
     const ticket = await googleClient.verifyIdToken({
       idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: googleClientId!,
     });
     
     if (!ticket) return res.status(400).json({ error: 'No pudimos verificar el token de Google' });
