@@ -66,8 +66,9 @@ console.log('GOOGLE_CLIENT_ID configurado:', process.env.GOOGLE_CLIENT_ID ? 'SÍ
 console.log('Puerto asignado:', port);
 console.log('-------------------------------');
 
-const server = app.listen(Number(port), () => {
-  console.log(`Server is running successfully on port ${port}`);
+const host = '0.0.0.0';
+const server = app.listen(Number(port), host, () => {
+  console.log(`Server is running successfully on http://${host}:${port}`);
 });
 
 server.on('error', (err: any) => {
