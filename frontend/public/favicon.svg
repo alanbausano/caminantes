@@ -1,0 +1,18 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top Bun -->
+  <path d="M4 14C4 10 8 6 16 6C24 6 28 10 28 14H4Z" fill="#D97706"/>
+  <!-- Lettuce -->
+  <path d="M4 15C4 14.4477 4.44772 14 5 14H27C27.5523 14 28 14.4477 28 15V16C28 16.5523 27.5523 17 27 17H5C4.44772 17 4 16.5523 4 16V15Z" fill="#10B981"/>
+  <!-- Cheese -->
+  <path d="M5 17H27L26 19H6L5 17Z" fill="#FBBF24"/>
+  <!-- Patty -->
+  <rect x="5" y="19" width="22" height="3" rx="1.5" fill="#78350F"/>
+  <!-- Bottom Bun -->
+  <path d="M5 23C5 22.4477 5.44772 22 6 22H26C26.5523 22 27 22.4477 27 23V24C27 25.1046 26.1046 26 25 26H7C5.89543 26 5 25.1046 5 24V23Z" fill="#D97706"/>
+  <!-- Sesame Seeds -->
+  <circle cx="10" cy="9" r="0.5" fill="#FEF3C7"/>
+  <circle cx="16" cy="8" r="0.5" fill="#FEF3C7"/>
+  <circle cx="22" cy="9" r="0.5" fill="#FEF3C7"/>
+  <circle cx="13" cy="11" r="0.5" fill="#FEF3C7"/>
+  <circle cx="19" cy="11" r="0.5" fill="#FEF3C7"/>
+</svg>
