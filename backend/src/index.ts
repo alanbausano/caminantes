@@ -47,6 +47,15 @@ app.get('/', (req, res) => {
   res.send('El API de Burger Loyalty está funcionando con éxito');
 });
 
-app.listen(port, () => {
+// Forzamos a que escuche en '0.0.0.0' para que Railway lo encuentre
+const server = app.listen(Number(port), '0.0.0.0', () => {
   console.log(`Server is running on port ${port}`);
+});
+
+server.on('error', (err: any) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Error: El puerto ${port} ya está siendo usado por otra aplicación.`);
+  } else {
+    console.error('SERVER ERROR:', err);
+  }
 });
