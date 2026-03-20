@@ -23,7 +23,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ pt: 4, pb: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Container maxWidth="sm" sx={{ py: { xs: 2.5, sm: 4 }, flex: 1, display: 'flex', flexDirection: 'column' }}>
       <Box 
         component={motion.div} 
         initial={{ opacity: 0, x: -20 }}
@@ -54,7 +54,7 @@ export default function ProfilePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.6, type: 'spring', stiffness: 80 }}
         elevation={12} 
-        sx={{ p: 3, borderRadius: 2, bgcolor: 'background.paper', mb: 4 }}
+        sx={{ p: 3, borderRadius: 2, bgcolor: 'background.paper', mb: { xs: 0, sm: 2 } }}
       >
         <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, mb: 3 }}>
           Tus datos
@@ -91,7 +91,7 @@ export default function ProfilePage() {
             variant="outlined" 
             fullWidth 
             slotProps={{ input: { readOnly: true } }}
-            helperText="¡Te vamos a mandar un regalo para tu cumple!"
+            helperText="Vas a tener descuentos en tu cumple!"
           />
         </Box>
       </Paper>

@@ -1,17 +1,21 @@
 import { prisma } from '../db.js';
 
 export async function recordVisit(userId: string) {
-  // Cooldown logic: max 1 visit per 12 hours
-  const lastVisit = await prisma.visit.findFirst({
-    where: { userId },
-    orderBy: { timestamp: 'desc' },
+  // Cooldown logic: max 1 visit per 8 hours
+  const cooldownHours = 8;
+  const cooldownMs = cooldownHours * 60 * 60 * 1000;
+  const since = new Date(Date.now() - cooldownMs);
+
+  // Check for a recent visit within the cooldown window
+  const recentVisit = await prisma.visit.findFirst({
+    where: {
+      userId,
+      timestamp: { gte: since }
+    },
   });
 
-  if (lastVisit) {
-    const hoursSinceLastVisit = (new Date().getTime() - new Date(lastVisit.timestamp).getTime()) / (1000 * 60 * 60);
-    if (hoursSinceLastVisit < 12) {
-      return { error: 'Solo podés sumar una visita cada 12 horas.' };
-    }
+  if (recentVisit) {
+    return { error: `Solo podés sumar una visita cada ${cooldownHours} horas.` };
   }
 
   const newVisit = await prisma.visit.create({

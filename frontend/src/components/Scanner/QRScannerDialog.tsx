@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Alert } from '@mui/material';
 import { BrowserQRCodeReader } from '@zxing/library';
 
@@ -10,55 +10,82 @@ interface QRScannerDialogProps {
 
 export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScannerDialogProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const codeReader = useRef(new BrowserQRCodeReader());
+  const codeReaderRef = useRef<BrowserQRCodeReader | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const hasScannedRef = useRef(false); // Prevent multiple fires on the same QR frame
   const [error, setError] = useState<string | null>(null);
 
+  const handleScanOnce = useCallback((code: string) => {
+    if (hasScannedRef.current) return;
+    hasScannedRef.current = true;
+    onScanSuccess(code);
+  }, [onScanSuccess]);
+
   useEffect(() => {
-    let controls: any = null;
+    if (!open) return;
 
-    const startScanner = async () => {
-      if (open && videoRef.current) {
-        try {
-          setError(null);
-          
-          // Using constraints is more reliable for mobile browsers to pick the back camera
-          const constraints: MediaStreamConstraints = {
-            video: { facingMode: 'environment' }
-          };
+    hasScannedRef.current = false;
+    setError(null);
 
-          const ctrl = await codeReader.current.decodeFromConstraints(constraints, videoRef.current, (result) => {
+    const startCamera = async () => {
+      try {
+        // Step 1: Request camera access via native getUserMedia (triggers permission prompt on mobile)
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } }
+        });
+        streamRef.current = stream;
+
+        // Step 2: Assign the stream to the video element
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play().catch(() => {}); // Autoplay may fail silently
+        }
+
+        // Step 3: Start ZXing decoding from the now-live video element
+        const reader = new BrowserQRCodeReader();
+        codeReaderRef.current = reader;
+
+        if (videoRef.current) {
+          reader.decodeFromVideoElement(videoRef.current).then((result) => {
             if (result) {
-              onScanSuccess(result.getText());
+              handleScanOnce(result.getText());
+            }
+          }).catch((e) => {
+            // ZXing throws when the video ends / is reset — this is expected on cleanup
+            if (e?.name !== 'NotFoundException') {
+              console.warn('ZXing decode ended:', e);
             }
           });
-          controls = ctrl;
-        } catch (e) {
-          console.error('Camera error with constraints:', e);
-          try {
-            // Fallback to default device if constraints fail
-            const ctrl = await codeReader.current.decodeFromVideoDevice(null, videoRef.current, (result) => {
-              if (result) {
-                onScanSuccess(result.getText());
-              }
-            });
-            controls = ctrl;
-          } catch (fallbackError) {
-            console.error('Fallback camera error:', fallbackError);
-            setError('No pudimos acceder a la cámara. Verificá los permisos de tu navegador y que estés usando HTTPS.');
-          }
+        }
+      } catch (e: any) {
+        console.error('Camera permission/start error:', e);
+        if (e?.name === 'NotAllowedError') {
+          setError('Permiso de cámara denegado. Habilitá el acceso en la configuración de tu navegador.');
+        } else if (e?.name === 'NotFoundError') {
+          setError('No se encontró ninguna cámara en este dispositivo.');
+        } else {
+          setError('No pudimos acceder a la cámara. Verificá los permisos y que uses HTTPS.');
         }
       }
     };
 
-    startScanner();
+    startCamera();
 
     return () => {
-      if (controls) {
-        // Some versions of ZXing need explicit stop via controls or reset
+      // Stop the native stream tracks (this turns off the camera light on mobile)
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
       }
-      codeReader.current.reset();
+      if (codeReaderRef.current) {
+        codeReaderRef.current.reset();
+        codeReaderRef.current = null;
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
     };
-  }, [open, onScanSuccess]);
+  }, [open, handleScanOnce]);
 
   return (
     <Dialog 
@@ -94,10 +121,9 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScan
           boxShadow: '0 0 20px rgba(255, 193, 7, 0.2)'
         }}>
           <video 
-            ref={videoRef} 
+            ref={videoRef}
             playsInline
             muted
-            autoPlay
             style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
           />
           
@@ -118,11 +144,11 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScan
               height: '2px',
               bgcolor: 'primary.main',
               boxShadow: '0 0 10px #FFC107',
-              animation: 'scan 2s infinite ease-in-out',
+              animation: 'scan 2s linear infinite',
             },
             '@keyframes scan': {
               '0%': { transform: 'translateY(0)' },
-              '100%': { transform: 'translateY(210px)' }
+              '100%': { transform: 'translateY(200px)' }
             }
           }} />
         </Box>

@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
 
     const user = await (prisma.user.findUnique({ where: { email } }) as Promise<User | null>);
     if (!user || !user.password) {
-      return res.status(401).json({ error: 'No encontramos tu usuario o tal vez tengas que entrar con Google' });
+      return res.status(401).json({ error: 'No encontramos tu usuario' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
