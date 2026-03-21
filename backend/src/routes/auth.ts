@@ -35,7 +35,8 @@ router.post('/register', async (req, res) => {
         phone,
         dob: new Date(dob),
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        isAdmin: false
       } as Prisma.UserCreateInput
     }) as unknown as Promise<User>);
 
@@ -124,6 +125,7 @@ router.post('/google', async (req, res) => {
           lastName: family_name || '',
           phone,
           dob: new Date(dob),
+          isAdmin: false,
         }
       }) as unknown as Promise<User>);
     }
