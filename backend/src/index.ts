@@ -6,6 +6,7 @@ dotenv.config();
 
 import authRoutes from './routes/auth.js';
 import visitRoutes from './routes/visits.js';
+import redemptionRoutes from './routes/redemptions.js';
 import { initBirthdayCron } from './cron/birthdays.js';
 
 const app = express();
@@ -45,6 +46,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/visits', visitRoutes);
+app.use('/api/redemptions', redemptionRoutes);
 
 // Add a specific health check route for Railway
 app.get('/health', (req, res) => {

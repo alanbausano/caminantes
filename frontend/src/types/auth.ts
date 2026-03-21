@@ -19,6 +19,7 @@ export interface User {
   email: string | null;
   phone: string;
   dob: string;
+  isAdmin: boolean;
   createdAt: string;
   updatedAt: string;
   visits?: Visit[];

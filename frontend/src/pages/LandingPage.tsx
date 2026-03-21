@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Typography, Container, Box, Button, TextField, Paper, Tabs, Tab, CircularProgress } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/logo.png';
 import { useToast } from '../context/ToastContext';
 import { useRegister, useLogin } from '../hooks/useAuth';
+import { useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 
 export default function LandingPage() {
@@ -13,9 +14,29 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const qrId = searchParams.get('qrId') || undefined;
+  const queryClient = useQueryClient();
 
   const registerMutation = useRegister();
   const loginMutation = useLogin();
+  
+  // Auto-redirect if already logged in
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    if (userStr && token) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.isAdmin) {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate('/dashboard', { replace: true });
+        }
+      } catch (e) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+      }
+    }
+  }, [navigate]);
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -116,14 +137,21 @@ export default function LandingPage() {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
 
     if (tab === 1) { // Register
       registerMutation.mutate({ ...formData, qrId }, {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          queryClient.invalidateQueries({ queryKey: ['profile'] });
+          
           showToast('¡Cuenta creada con éxito!', 'success');
-          navigate('/dashboard');
+          if (data.user.isAdmin) {
+            navigate('/admin', { replace: true });
+          } else {
+            navigate('/dashboard', { replace: true });
+          }
         },
         onError: (error: AxiosError<{ error: string }>) => {
           const backendError = error.response?.data?.error || '';
@@ -139,9 +167,17 @@ export default function LandingPage() {
         password: formData.password,
         qrId
       }, {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          queryClient.invalidateQueries({ queryKey: ['profile'] });
+
           showToast('¡Qué bueno verte de nuevo!', 'success');
-          navigate('/dashboard');
+          if (data.user.isAdmin) {
+            navigate('/admin', { replace: true });
+          } else {
+            navigate('/dashboard', { replace: true });
+          }
         },
         onError: (error: AxiosError<{ error: string }>) => {
           showToast(error.response?.data?.error || 'El correo o la contraseña no son correctos', 'error');

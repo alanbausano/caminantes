@@ -15,11 +15,19 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScan
   const hasScannedRef = useRef(false); // Prevent multiple fires on the same QR frame
   const [error, setError] = useState<string | null>(null);
 
+  const scanCallbackRef = useRef(onScanSuccess);
+  
+  // Keep the callback ref up to date without triggering effect re-runs
+  useEffect(() => {
+    scanCallbackRef.current = onScanSuccess;
+  }, [onScanSuccess]);
+
   const handleScanOnce = useCallback((code: string) => {
     if (hasScannedRef.current) return;
     hasScannedRef.current = true;
-    onScanSuccess(code);
-  }, [onScanSuccess]);
+    console.log("QR detected, triggering callback");
+    scanCallbackRef.current(code);
+  }, []);
 
   useEffect(() => {
     if (!open) return;

@@ -7,7 +7,7 @@ import { recordVisit } from '../services/visitService.js';
 const router = express.Router();
 
 // Get user visits and coupons profile
-router.get('/me', authenticateToken, async (req: AuthRequest, res) => {
+router.get('/profile', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.id },
@@ -16,8 +16,8 @@ router.get('/me', authenticateToken, async (req: AuthRequest, res) => {
     if (!user) return res.status(404).json({ error: 'No encontramos al usuario' });
     
     // We send back the user profile omitting sensitive data
-    const { email, firstName, lastName, phone, dob, visits, coupons } = user;
-    res.json({ email, firstName, lastName, phone, dob, visits, coupons });
+    const { email, firstName, lastName, phone, dob, visits, coupons, isAdmin } = user;
+    res.json({ email, firstName, lastName, phone, dob, visits, coupons, isAdmin });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Hubo un error en el servidor' });

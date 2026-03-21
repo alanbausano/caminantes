@@ -44,7 +44,8 @@ router.post('/register', async (req, res) => {
       await recordVisit(newUser.id);
     }
 
-    const token = jwt.sign({ id: newUser.id }, JWT_SECRET, { expiresIn: '7d' });
+    console.log(`User registered: ${newUser.email}, isAdmin: ${newUser.isAdmin}`);
+    const token = jwt.sign({ id: newUser.id, isAdmin: !!newUser.isAdmin }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, user: newUser } as AuthResponse);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Hubo un error al crear tu cuenta';
@@ -72,7 +73,8 @@ router.post('/login', async (req, res) => {
       await recordVisit(user.id);
     }
 
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' });
+    console.log(`User logged in: ${user.email}, isAdmin: ${user.isAdmin}`);
+    const token = jwt.sign({ id: user.id, isAdmin: !!user.isAdmin }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, user } as AuthResponse);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Hubo un error al iniciar sesión';
@@ -109,13 +111,13 @@ router.post('/google', async (req, res) => {
     
     const userEmail = email as string;
     
-    let user: User | null = await prisma.user.findUnique({ where: { email: userEmail } });
+    let user: User | null = await (prisma.user.findUnique({ where: { email: userEmail } }) as Promise<User | null>);
     
     if (!user) {
       if (!phone || !dob) {
         return res.status(400).json({ requireMoreInfo: true, email: userEmail, firstName: given_name, lastName: family_name });
       }
-      user = await prisma.user.create({
+      user = await (prisma.user.create({
         data: {
           email: userEmail,
           firstName: given_name || '',
@@ -123,16 +125,15 @@ router.post('/google', async (req, res) => {
           phone,
           dob: new Date(dob),
         }
-      });
+      }) as unknown as Promise<User>);
     }
 
     // If logged in via QR, record the visit
-    if (qrId) {
-      await recordVisit(user.id);
+    if (qrId && user) {
+      await recordVisit((user as User).id);
     }
-
-    const jwtToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token: jwtToken, user } as AuthResponse);
+    const jwtToken = jwt.sign({ id: user.id, isAdmin: !!(user as User).isAdmin }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token: jwtToken, user: user as User } as AuthResponse);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Hubo un error al entrar con Google';
     console.error('Google auth error:', error);

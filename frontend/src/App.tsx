@@ -9,7 +9,8 @@ import MenuPage from './pages/MenuPage';
 import MapPage from './pages/MapPage';
 import ProfilePage from './pages/ProfilePage';
 import QRCallbackPage from './pages/QRCallbackPage';
-import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminPage from './pages/AdminPage';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
 import MainLayout from './components/Layout/MainLayout';
 
 import { ToastProvider } from './context/ToastContext';
@@ -35,9 +36,17 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/scan/:id" element={<QRCallbackPage />} />
-          <Route path="/admin" element={<AdminDashboardPage />} />
+          <Route path="/admin" element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminPage />
+            </ProtectedRoute>
+          } />
           
-          <Route element={<MainLayout />}>
+          <Route element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/menu" element={<MenuPage />} />
             <Route path="/map" element={<MapPage />} />

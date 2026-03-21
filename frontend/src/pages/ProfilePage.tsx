@@ -2,7 +2,7 @@ import { Typography, Container, Box, Paper, TextField, Button, Avatar, CircularP
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { useProfile } from '../hooks/useVisits';
+import { useProfile } from '../hooks/useAuth';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function ProfilePage() {
