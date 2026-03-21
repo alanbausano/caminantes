@@ -20,17 +20,36 @@ export default function DashboardPage() {
   const redeemMutation = useRedeemReward();
   const [scannerOpen, setScannerOpen] = useState(false);
   const [redeemOpen, setRedeemOpen] = useState(false);
+  const [isProcessingScan, setIsProcessingScan] = useState(false);
   const { showToast } = useToast();
   const targetVisits = 10;
 
   const handleScanSuccess = useCallback((code: string) => {
-    console.log("Processing scan for code:", code);
-    setScannerOpen(false);
-    scanMutation.mutate(code, {
-      onSuccess: () => showToast('¡Anotamos tu visita con éxito!', 'success'),
+    console.log("QR Scan detected raw code:", code);
+    
+    // Extract ID if it's a URL (e.g., http://domain.com/scan/ID)
+    let finalCode = code;
+    if (code.includes('/scan/')) {
+      const parts = code.split('/scan/');
+      finalCode = parts[parts.length - 1].split(/[?#]/)[0]; // Get ID and strip query/hash
+      console.log("Extracted ID from URL:", finalCode);
+    }
+
+    setIsProcessingScan(true);
+    
+    scanMutation.mutate(finalCode, {
+      onSuccess: (data) => {
+        console.log("Scan request success:", data);
+        showToast('¡Anotamos tu visita con éxito!', 'success');
+        setScannerOpen(false);
+        setIsProcessingScan(false);
+      },
       onError: (error) => {
         const axiosError = error as AxiosError<{ error: string }>;
+        console.error("Scan request error:", axiosError.response?.data || axiosError.message);
         showToast(axiosError.response?.data?.error || 'Hubo un error al anotar tu visita', 'error');
+        setScannerOpen(false);
+        setIsProcessingScan(false);
       }
     });
   }, [scanMutation, showToast]);
@@ -116,7 +135,8 @@ export default function DashboardPage() {
           p: { xs: 2, sm: 3 }, 
           borderRadius: 2, 
           bgcolor: 'background.paper',
-          flexShrink: 0
+          flexShrink: 0,
+          mt: 5
         }}
       >
         <CouponTracker visits={visitsCount} targetVisits={targetVisits} />
@@ -217,6 +237,7 @@ export default function DashboardPage() {
         open={scannerOpen} 
         onClose={() => setScannerOpen(false)} 
         onScanSuccess={handleScanSuccess}
+        isProcessing={isProcessingScan}
       />
 
       <style>{`

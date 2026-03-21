@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box, Alert } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box, Alert, CircularProgress } from '@mui/material';
 import { BrowserQRCodeReader } from '@zxing/library';
 
 interface QRScannerDialogProps {
   open: boolean;
   onClose: () => void;
   onScanSuccess: (code: string) => void;
+  isProcessing?: boolean;
 }
 
-export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScannerDialogProps) {
+export default function QRScannerDialog({ open, onClose, onScanSuccess, isProcessing = false }: QRScannerDialogProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const codeReaderRef = useRef<BrowserQRCodeReader | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -23,11 +24,11 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScan
   }, [onScanSuccess]);
 
   const handleScanOnce = useCallback((code: string) => {
-    if (hasScannedRef.current) return;
+    if (hasScannedRef.current || isProcessing) return;
     hasScannedRef.current = true;
-    console.log("QR detected, triggering callback");
+    console.log("QR detected, triggering callback:", code);
     scanCallbackRef.current(code);
-  }, []);
+  }, [isProcessing]);
 
   useEffect(() => {
     if (!open) return;
@@ -98,7 +99,7 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScan
   return (
     <Dialog 
       open={open} 
-      onClose={onClose} 
+      onClose={isProcessing ? undefined : onClose} 
       fullWidth 
       maxWidth="xs" 
       PaperProps={{ sx: { borderRadius: 3, bgcolor: 'background.paper', overflow: 'hidden' } }}
@@ -132,33 +133,60 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScan
             ref={videoRef}
             playsInline
             muted
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              objectFit: 'cover',
+              filter: isProcessing ? 'blur(4px) grayscale(0.5)' : 'none',
+              transition: 'filter 0.3s ease'
+            }} 
           />
           
-          {/* Scanning frame overlay */}
-          <Box sx={{
-            position: 'absolute',
-            width: '70%',
-            height: '70%',
-            border: '2px solid rgba(255, 255, 255, 0.5)',
-            borderRadius: 2,
-            pointerEvents: 'none',
-            '&::after': {
-              content: '""',
+          {isProcessing && (
+            <Box sx={{
               position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '2px',
-              bgcolor: 'primary.main',
-              boxShadow: '0 0 10px #FFC107',
-              animation: 'scan 2s linear infinite',
-            },
-            '@keyframes scan': {
-              '0%': { transform: 'translateY(0)' },
-              '100%': { transform: 'translateY(200px)' }
-            }
-          }} />
+              inset: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: 'rgba(26, 26, 26, 0.4)',
+              zIndex: 2,
+              backdropFilter: 'blur(2px)'
+            }}>
+              <CircularProgress size={60} thickness={4} sx={{ color: 'primary.main', mb: 2 }} />
+              <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+                Procesando...
+              </Typography>
+            </Box>
+          )}
+
+          {/* Scanning frame overlay */}
+          {!isProcessing && (
+            <Box sx={{
+              position: 'absolute',
+              width: '70%',
+              height: '70%',
+              border: '2px solid rgba(255, 255, 255, 0.5)',
+              borderRadius: 2,
+              pointerEvents: 'none',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '2px',
+                bgcolor: 'primary.main',
+                boxShadow: '0 0 10px #FFC107',
+                animation: 'scan 2s linear infinite',
+              },
+              '@keyframes scan': {
+                '0%': { transform: 'translateY(0)' },
+                '100%': { transform: 'translateY(200px)' }
+              }
+            }} />
+          )}
         </Box>
 
         <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ px: 2 }}>
@@ -166,18 +194,20 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess }: QRScan
         </Typography>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', pb: 3, pt: 0 }}>
-        <Typography 
-          variant="body2" 
-          onClick={onClose}
-          sx={{ 
-            color: 'text.secondary', 
-            cursor: 'pointer', 
-            fontWeight: 'bold',
-            '&:hover': { color: 'text.primary' }
-          }}
-        >
-          Cancelar
-        </Typography>
+        {!isProcessing && (
+          <Typography 
+            variant="body2" 
+            onClick={onClose}
+            sx={{ 
+              color: 'text.secondary', 
+              cursor: 'pointer', 
+              fontWeight: 'bold',
+              '&:hover': { color: 'text.primary' }
+            }}
+          >
+            Cancelar
+          </Typography>
+        )}
       </DialogActions>
     </Dialog>
   );

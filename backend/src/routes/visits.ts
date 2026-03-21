@@ -28,12 +28,17 @@ router.get('/profile', authenticateToken, async (req: AuthRequest, res) => {
 router.post('/scan', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user!.id;
+    const { code } = req.body;
+    console.log(`[SCAN] User ${userId} scanning code: ${code || 'NO_CODE'}`);
+    
     const result = await recordVisit(userId);
     
     if ('error' in result) {
+      console.warn(`[SCAN] Error for user ${userId}: ${result.error}`);
       return res.status(400).json({ error: result.error });
     }
 
+    console.log(`[SCAN] Success for user ${userId}:`, result);
     res.json(result);
   } catch (error) {
     console.error(error);
