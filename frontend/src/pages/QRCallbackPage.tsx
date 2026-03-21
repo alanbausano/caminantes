@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Typography, Container, Box, CircularProgress } from '@mui/material';
 import { useToast } from '../context/ToastContext';
@@ -9,7 +9,8 @@ export default function QRCallbackPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const scanMutation = useScanVisit();
+  const { mutate } = useScanVisit();
+  const processedRef = useRef(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -21,8 +22,10 @@ export default function QRCallbackPage() {
         navigate(`/?qrId=${id}`, { replace: true });
         return;
       }
+      if (processedRef.current) return;
+      processedRef.current = true;
 
-      scanMutation.mutate(id, {
+      mutate(id, {
         onSuccess: () => {
           showToast('Registramos tu visita con éxito!', 'success');
           navigate('/dashboard', { replace: true });
@@ -33,7 +36,7 @@ export default function QRCallbackPage() {
         }
       });
     }
-  }, [id, navigate, scanMutation, showToast]);
+  }, [id, navigate, mutate, showToast]);
 
   return (
     <Container maxWidth="sm">

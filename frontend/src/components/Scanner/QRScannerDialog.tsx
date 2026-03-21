@@ -23,12 +23,17 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess, isProces
     scanCallbackRef.current = onScanSuccess;
   }, [onScanSuccess]);
 
+  const isProcessingRef = useRef(isProcessing);
+  useEffect(() => {
+    isProcessingRef.current = isProcessing;
+  }, [isProcessing]);
+
   const handleScanOnce = useCallback((code: string) => {
-    if (hasScannedRef.current || isProcessing) return;
+    if (hasScannedRef.current || isProcessingRef.current) return;
     hasScannedRef.current = true;
     console.log("QR detected, triggering callback:", code);
     scanCallbackRef.current(code);
-  }, [isProcessing]);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -94,7 +99,7 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess, isProces
         videoRef.current.srcObject = null;
       }
     };
-  }, [open, handleScanOnce]);
+  }, [open]);
 
   return (
     <Dialog 

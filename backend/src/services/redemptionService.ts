@@ -16,7 +16,7 @@ export const createRedemptionRequest = async (userId: string) => {
   });
 
   if (pendingRequest) {
-    throw new Error('Ya tenés un pedido de canje pendiente. Avisale al cajero.');
+    throw new Error('Ya tenés un pedido de canje pendiente. Avisá en caja.');
   }
 
   // 3. Create the request

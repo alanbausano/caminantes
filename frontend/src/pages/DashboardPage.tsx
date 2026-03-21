@@ -211,7 +211,7 @@ export default function DashboardPage() {
         <DialogContent>
           <DialogContentText textAlign="center">
             Estás por pedir tu burger gratis. <br/>
-            <strong>Avisale al cajero/a para que lo procese.</strong>
+            <strong>Avisá en caja para que lo procesen.</strong>
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center', px: 3, pb: 2, gap: 1 }}>
@@ -228,7 +228,7 @@ export default function DashboardPage() {
             disabled={redeemMutation.isPending}
             sx={{ borderRadius: 2, px: 3, fontWeight: 'bold', color: '#1A1A1A' }}
           >
-            {redeemMutation.isPending ? <CircularProgress size={24} color="inherit" /> : 'Confirmar canje'}
+            {redeemMutation.isPending ? <CircularProgress size={24} color="inherit" /> : 'Confirmar'}
           </Button>
         </DialogActions>
       </Dialog>
