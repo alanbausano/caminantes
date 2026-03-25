@@ -24,6 +24,7 @@ export interface User {
   updatedAt: string;
   visits?: Visit[];
   coupons?: Coupon[];
+  redemptions?: { id: string, status: string, createdAt: string, processedAt?: string | null }[];
 }
 
 export interface AuthResponse {

@@ -2,15 +2,18 @@ import { useState, useEffect } from 'react';
 import QRCodeLib from 'react-qr-code';
 import { 
   Container, Box, Typography, Paper, CircularProgress, 
-  Tabs, Tab, List, ListItem, ListItemText, Divider, Button, IconButton 
+  Tabs, Tab, List, ListItem, ListItemText, Divider, Button, IconButton,
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
 } from '@mui/material';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import HistoryIcon from '@mui/icons-material/History';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/logo.png';
-import { usePendingRedemptions, useCompleteRedemption } from '../hooks/useVisits';
+import { usePendingRedemptions, useCompleteRedemption, useCompletedRedemptions } from '../hooks/useVisits';
 import { useToast } from '../context/ToastContext';
 
 // Handle commonjs interop for Vite/NodeNext
@@ -47,7 +50,13 @@ export default function AdminPage() {
   const [token, setToken] = useState<string>('');
   const [timeLeft, setTimeLeft] = useState<number>(30);
   
+  // Confirm Dialog State
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedRedemption, setSelectedRedemption] = useState<{ id: string, name: string } | null>(null);
+
   const { data: redemptions, isLoading: redemptionsLoading, refetch, isRefetching } = usePendingRedemptions();
+  const { data: completedRedemptions, isLoading: completedLoading, refetch: refetchCompleted, isRefetching: isCompletedRefetching } = useCompletedRedemptions();
+  
   const completeMutation = useCompleteRedemption();
   const { showToast } = useToast();
 
@@ -75,14 +84,29 @@ export default function AdminPage() {
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleComplete = (id: string, userName: string) => {
-    if (!window.confirm(`¿Confirmar entrega de burger para ${userName}?`)) return;
-    completeMutation.mutate(id, {
+  const handleRefresh = () => {
+    refetch();
+    refetchCompleted();
+  };
+
+  const initiateComplete = (id: string, userName: string) => {
+    setSelectedRedemption({ id, name: userName });
+    setConfirmOpen(true);
+  };
+
+  const confirmComplete = () => {
+    if (!selectedRedemption) return;
+    completeMutation.mutate(selectedRedemption.id, {
       onSuccess: () => {
-        showToast(`¡Canje de ${userName} completado!`, 'success');
+        showToast(`¡Canje de ${selectedRedemption.name} completado!`, 'success');
+        setConfirmOpen(false);
+        setSelectedRedemption(null);
+        refetchCompleted(); // Update the history list
       },
       onError: (error: any) => {
         showToast(error.response?.data?.error || 'Error al completar el canje', 'error');
+        setConfirmOpen(false);
+        setSelectedRedemption(null);
       }
     });
   };
@@ -174,11 +198,11 @@ export default function AdminPage() {
           {/* TAB 1: REQUESTS */}
           <CustomTabPanel value={tabValue} index={1}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>
                 Canjes Pendientes
               </Typography>
-              <IconButton onClick={() => refetch()} disabled={isRefetching}>
-                <RefreshIcon color="primary" />
+              <IconButton onClick={handleRefresh} disabled={isRefetching || isCompletedRefetching}>
+                {(isRefetching || isCompletedRefetching) ? <CircularProgress size={24} /> : <RefreshIcon color="primary" />}
               </IconButton>
             </Box>
 
@@ -226,28 +250,118 @@ export default function AdminPage() {
                             variant="contained"
                             color="success"
                             size="small"
-                            startIcon={<CheckCircleIcon />}
-                            onClick={() => handleComplete(red.id, red.user.firstName)}
+                            startIcon={<CheckCircleOutlineIcon />}
+                            onClick={() => initiateComplete(red.id, red.user.firstName)}
                             disabled={completeMutation.isPending}
                             sx={{ borderRadius: 2, fontWeight: 'bold', ml: { sm: 'auto' } }}
                           >
-                            Entregado
+                            Marcar como Entregado
                           </Button>
                         </ListItem>
                         {index < redemptions.length - 1 && <Divider />}
                       </Box>
                     ))
                   ) : (
-                    <Box sx={{ py: 8, textAlign: 'center' }}>
+                    <Box sx={{ py: 6, textAlign: 'center' }}>
                       <Typography color="text.secondary">No hay pedidos pendientes. ✨</Typography>
                     </Box>
                   )}
                 </AnimatePresence>
               </List>
             )}
+
+            {/* HISTORIAL (COMPLETED) */}
+            <Box sx={{ mt: 5, mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <HistoryIcon color="action" />
+              <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>
+                Historial de Entregados
+              </Typography>
+            </Box>
+            
+            {completedLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <List sx={{ p: 0 }}>
+                {completedRedemptions && completedRedemptions.length > 0 ? (
+                  completedRedemptions.map((red, index) => (
+                    <Box key={red.id}>
+                      <ListItem 
+                        sx={{ 
+                          px: 2, py: 1.5,
+                          flexDirection: { xs: 'column', sm: 'row' },
+                          alignItems: { xs: 'flex-start', sm: 'center' },
+                          gap: 2,
+                          bgcolor: 'rgba(0,0,0,0.02)',
+                          borderRadius: 2,
+                          mb: index < completedRedemptions.length - 1 ? 1 : 0
+                        }}
+                      >
+                        <ListItemText
+                          primary={
+                            <Typography sx={{ fontWeight: 'bold', color: 'text.secondary' }}>
+                              {red.user.firstName} {red.user.lastName}
+                            </Typography>
+                          }
+                          secondary={
+                            <Typography variant="caption" color="text.disabled">
+                              Entregado el {new Date(red.processedAt).toLocaleDateString()} a las {new Date(red.processedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </Typography>
+                          }
+                        />
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: { sm: 'auto' } }}>
+                           <TaskAltIcon color="success" fontSize="small" />
+                           <Typography variant="body2" color="success.main" sx={{ fontWeight: 'bold' }}>Entregado</Typography>
+                        </Box>
+                      </ListItem>
+                    </Box>
+                  ))
+                ) : (
+                  <Box sx={{ py: 4, textAlign: 'center' }}>
+                    <Typography color="text.disabled">No hay pedidos entregados aún.</Typography>
+                  </Box>
+                )}
+              </List>
+            )}
           </CustomTabPanel>
         </Box>
       </Paper>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={confirmOpen}
+        onClose={() => !completeMutation.isPending && setConfirmOpen(false)}
+        PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
+      >
+        <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>
+          Confirmar Entrega
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText textAlign="center">
+            ¿Confirmás que le entregaste la hamburguesa gratis a <strong>{selectedRedemption?.name}</strong>? <br/><br/>
+            Esta acción no se puede deshacer y reseteará sus visitas.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center', px: 3, pb: 2, gap: 1 }}>
+          <Button 
+            onClick={() => setConfirmOpen(false)} 
+            disabled={completeMutation.isPending}
+            sx={{ fontWeight: 'bold', color: 'text.secondary' }}
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={confirmComplete} 
+            variant="contained" 
+            color="success"
+            disabled={completeMutation.isPending}
+            sx={{ borderRadius: 2, px: 3, fontWeight: 'bold' }}
+          >
+            {completeMutation.isPending ? <CircularProgress size={24} color="inherit" /> : 'Sí, entregado'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

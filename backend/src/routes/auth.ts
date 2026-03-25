@@ -42,7 +42,7 @@ router.post('/register', async (req, res) => {
 
     // If registered via QR, record the first visit
     if (qrId) {
-      await recordVisit(newUser.id);
+      await recordVisit(newUser.id, qrId);
     }
 
     console.log(`User registered: ${newUser.email}, isAdmin: ${newUser.isAdmin}`);
@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
 
     // If logged in via QR, record the visit
     if (qrId) {
-      await recordVisit(user.id);
+      await recordVisit(user.id, qrId);
     }
 
     console.log(`User logged in: ${user.email}, isAdmin: ${user.isAdmin}`);
@@ -132,7 +132,7 @@ router.post('/google', async (req, res) => {
 
     // If logged in via QR, record the visit
     if (qrId && user) {
-      await recordVisit((user as User).id);
+      await recordVisit((user as User).id, qrId);
     }
     const jwtToken = jwt.sign({ id: user.id, isAdmin: !!(user as User).isAdmin }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token: jwtToken, user: user as User } as AuthResponse);

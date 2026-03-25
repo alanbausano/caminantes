@@ -46,6 +46,18 @@ export const usePendingRedemptions = () => {
   });
 };
 
+export const useCompletedRedemptions = () => {
+  return useQuery<any[]>({
+    queryKey: ['admin', 'redemptions', 'completed'],
+    queryFn: async () => {
+      const res = await api.get('/redemptions/admin/completed');
+      return res.data;
+    },
+    // Refetch every hour
+    refetchInterval: 3600000 
+  });
+};
+
 export const useCompleteRedemption = () => {
   const queryClient = useQueryClient();
 

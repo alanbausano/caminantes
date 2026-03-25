@@ -78,6 +78,7 @@ export default function DashboardPage() {
   const visitsCount = userData?.visits?.length || 0;
   const firstName = userData?.firstName || 'Invitado';
   const canRedeem = visitsCount >= targetVisits;
+  const hasPendingRedemption = userData?.redemptions?.some((r: any) => r.status === 'PENDING') || false;
 
   return (
     <Container maxWidth="sm" sx={{ 
@@ -161,7 +162,7 @@ export default function DashboardPage() {
               <Button
                 fullWidth
                 variant="contained"
-                color="secondary"
+                disabled={hasPendingRedemption}
                 size="large"
                 startIcon={<RedeemsIcon />}
                 onClick={() => setRedeemOpen(true)}
@@ -169,15 +170,19 @@ export default function DashboardPage() {
                   py: { xs: 1.5, sm: 2 },
                   fontSize: '1.1rem',
                   fontWeight: 'bold',
-                  bgcolor: '#FFC107',
-                  color: '#1A1A1A',
-                  '&:hover': { bgcolor: '#FFD54F' },
+                  bgcolor: hasPendingRedemption ? '#A17A00' : '#FFC107',
+                  color: hasPendingRedemption ? 'rgba(255, 255, 255, 0.9)' : '#1A1A1A',
+                  '&:hover': { bgcolor: hasPendingRedemption ? '#A17A00' : '#FFD54F' },
+                  '&.Mui-disabled': {
+                    bgcolor: '#A17A00',
+                    color: 'rgba(255, 255, 255, 0.9)'
+                  },
                   borderRadius: 2,
-                  boxShadow: '0 0 20px rgba(255, 193, 7, 0.4)',
-                  animation: 'pulse 2s infinite'
+                  boxShadow: hasPendingRedemption ? 'none' : '0 0 20px rgba(255, 193, 7, 0.4)',
+                  animation: hasPendingRedemption ? 'none' : 'pulse 2s infinite'
                 }}
               >
-                ¡Canjear Burger Gratis!
+                {hasPendingRedemption ? 'Canje Solicitado' : '¡Canjear Burger Gratis!'}
               </Button>
             </Box>
           )}

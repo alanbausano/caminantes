@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import { adminMiddleware } from '../middleware/admin.js';
-import { createRedemptionRequest, getPendingRedemptions, completeRedemption } from '../services/redemptionService.js';
+import { createRedemptionRequest, getPendingRedemptions, getCompletedRedemptions, completeRedemption } from '../services/redemptionService.js';
 
 const router = Router();
 
@@ -19,8 +19,17 @@ router.post('/', authenticateToken, async (req, res) => {
 // Admin views pending redemptions
 router.get('/admin/pending', authenticateToken, adminMiddleware, async (req, res) => {
   try {
-    // Note: In a real app we'd verify if (req as any).user.isAdmin
     const redemptions = await getPendingRedemptions();
+    res.json(redemptions);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Admin views completed redemptions
+router.get('/admin/completed', authenticateToken, adminMiddleware, async (req, res) => {
+  try {
+    const redemptions = await getCompletedRedemptions();
     res.json(redemptions);
   } catch (error: any) {
     res.status(500).json({ error: error.message });

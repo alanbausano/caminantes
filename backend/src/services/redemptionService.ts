@@ -38,6 +38,18 @@ export const getPendingRedemptions = async () => {
   });
 };
 
+export const getCompletedRedemptions = async () => {
+  return await prisma.redemptionRequest.findMany({
+    where: { status: 'COMPLETED' },
+    include: { 
+      user: {
+        select: { firstName: true, lastName: true, phone: true }
+      } 
+    },
+    orderBy: { processedAt: 'desc' }
+  });
+};
+
 export const completeRedemption = async (redemptionId: string) => {
   const request = await prisma.redemptionRequest.findUnique({
     where: { id: redemptionId }
