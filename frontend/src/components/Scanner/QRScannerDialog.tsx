@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box, Alert, CircularProgress } from '@mui/material';
-import { BrowserQRCodeReader } from '@zxing/library';
+import { Html5Qrcode } from 'html5-qrcode';
 
 interface QRScannerDialogProps {
   open: boolean;
@@ -10,15 +10,11 @@ interface QRScannerDialogProps {
 }
 
 export default function QRScannerDialog({ open, onClose, onScanSuccess, isProcessing = false }: QRScannerDialogProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const codeReaderRef = useRef<BrowserQRCodeReader | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const hasScannedRef = useRef(false); // Prevent multiple fires on the same QR frame
   const [error, setError] = useState<string | null>(null);
-
-  const scanCallbackRef = useRef(onScanSuccess);
+  const scannerRef = useRef<Html5Qrcode | null>(null);
+  const hasScannedRef = useRef(false);
   
-  // Keep the callback ref up to date without triggering effect re-runs
+  const scanCallbackRef = useRef(onScanSuccess);
   useEffect(() => {
     scanCallbackRef.current = onScanSuccess;
   }, [onScanSuccess]);
@@ -40,66 +36,65 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess, isProces
 
     hasScannedRef.current = false;
     setError(null);
+    let html5QrCode: Html5Qrcode | null = null;
+    let isComponentMounted = true;
 
     const startCamera = async () => {
       try {
-        // Step 1: Request camera access via native getUserMedia (triggers permission prompt on mobile)
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: 'environment' } }
-        });
-        streamRef.current = stream;
+        html5QrCode = new Html5Qrcode("qr-reader");
+        scannerRef.current = html5QrCode;
 
-        // Step 2: Assign the stream to the video element
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          await videoRef.current.play().catch(() => {}); // Autoplay may fail silently
-        }
-
-        // Step 3: Start ZXing decoding from the now-live video element
-        const reader = new BrowserQRCodeReader();
-        codeReaderRef.current = reader;
-
-        if (videoRef.current) {
-          reader.decodeFromVideoElement(videoRef.current).then((result) => {
-            if (result) {
-              handleScanOnce(result.getText());
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0,
+          },
+          (decodedText) => {
+            if (isComponentMounted) {
+               handleScanOnce(decodedText);
             }
-          }).catch((e) => {
-            // ZXing throws when the video ends / is reset — this is expected on cleanup
-            if (e?.name !== 'NotFoundException') {
-              console.warn('ZXing decode ended:', e);
-            }
-          });
-        }
-      } catch (e: any) {
-        console.error('Camera permission/start error:', e);
-        if (e?.name === 'NotAllowedError') {
+          },
+          () => {
+            // Ignore parse errors (happen on every frame with no QR code)
+          }
+        );
+      } catch (err: any) {
+        console.error('Camera permission/start error:', err);
+        if (!isComponentMounted) return;
+        const errMsg = typeof err === 'string' ? err : err?.message || '';
+        
+        if (errMsg.includes("NotAllowedError") || errMsg.includes("Permission denied")) {
           setError('Permiso de cámara denegado. Habilitá el acceso en la configuración de tu navegador.');
-        } else if (e?.name === 'NotFoundError') {
+        } else if (errMsg.includes("NotFoundError") || errMsg.includes("Requested device not found")) {
           setError('No se encontró ninguna cámara en este dispositivo.');
         } else {
-          setError('No pudimos acceder a la cámara. Verificá los permisos y que uses HTTPS.');
+          setError('No pudimos acceder a la cámara. Verificá los permisos y la conexión.');
         }
       }
     };
 
-    startCamera();
+    // Need a small timeout to let the modal Dialog render the div into the DOM
+    const timer = setTimeout(() => {
+       if (isComponentMounted) {
+           startCamera();
+       }
+    }, 100);
 
     return () => {
-      // Stop the native stream tracks (this turns off the camera light on mobile)
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-        streamRef.current = null;
-      }
-      if (codeReaderRef.current) {
-        codeReaderRef.current.reset();
-        codeReaderRef.current = null;
-      }
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
+      isComponentMounted = false;
+      clearTimeout(timer);
+      if (html5QrCode && html5QrCode.isScanning) {
+        // html5-qrcode stop() returns a promise and is asynchronous
+        html5QrCode.stop().then(() => {
+          html5QrCode?.clear();
+        }).catch(err => console.error("Error stopping scanner", err));
+      } else if (html5QrCode) {
+        html5QrCode.clear();
       }
     };
-  }, [open]);
+  }, [open, handleScanOnce]);
 
   return (
     <Dialog 
@@ -110,7 +105,7 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess, isProces
       PaperProps={{ sx: { borderRadius: 3, bgcolor: 'background.paper', overflow: 'hidden' } }}
     >
       <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold', pt: 3 }}>Escaneá el código QR</DialogTitle>
-      <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 1 }}>
+      <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 1, px: 2 }}>
         
         {error && (
           <Alert severity="error" sx={{ mb: 2, width: '100%', borderRadius: 2 }}>
@@ -132,19 +127,20 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess, isProces
           mb: 2,
           border: '2px solid',
           borderColor: 'primary.main',
-          boxShadow: '0 0 20px rgba(255, 193, 7, 0.2)'
+          boxShadow: '0 0 20px rgba(255, 193, 7, 0.2)',
+          '& video': {
+            objectFit: 'cover !important',
+            width: '100% !important',
+            height: '100% !important'
+          }
         }}>
-          <video 
-            ref={videoRef}
-            playsInline
-            muted
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              objectFit: 'cover',
-              filter: isProcessing ? 'blur(4px) grayscale(0.5)' : 'none',
-              transition: 'filter 0.3s ease'
-            }} 
+          <div 
+             id="qr-reader" 
+             style={{ 
+               width: '100%', 
+               height: '100%',
+               display: isProcessing ? 'none' : 'block' // hide video wrapper if processing
+             }}
           />
           
           {isProcessing && (
@@ -155,9 +151,9 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess, isProces
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              bgcolor: 'rgba(26, 26, 26, 0.4)',
-              zIndex: 2,
-              backdropFilter: 'blur(2px)'
+              bgcolor: 'rgba(26, 26, 26, 0.8)',
+              zIndex: 10,
+              backdropFilter: 'blur(4px)'
             }}>
               <CircularProgress size={60} thickness={4} sx={{ color: 'primary.main', mb: 2 }} />
               <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
@@ -167,7 +163,7 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess, isProces
           )}
 
           {/* Scanning frame overlay */}
-          {!isProcessing && (
+          {!isProcessing && !error && (
             <Box sx={{
               position: 'absolute',
               width: '70%',
@@ -175,6 +171,7 @@ export default function QRScannerDialog({ open, onClose, onScanSuccess, isProces
               border: '2px solid rgba(255, 255, 255, 0.5)',
               borderRadius: 2,
               pointerEvents: 'none',
+              zIndex: 5,
               '&::after': {
                 content: '""',
                 position: 'absolute',
