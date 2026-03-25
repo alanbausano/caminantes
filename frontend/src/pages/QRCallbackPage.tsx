@@ -18,7 +18,7 @@ export default function QRCallbackPage() {
     if (id) {
       if (!token) {
         // Redirect to landing page with the QR ID to handle it after login/register
-        showToast('¡Ingresá para registrar tu visita!', 'info');
+        showToast('Registrate o ingresá si ya tenés una cuenta para registrar tu visita!', 'info');
         navigate(`/?qrId=${id}`, { replace: true });
         return;
       }

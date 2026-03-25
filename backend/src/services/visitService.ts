@@ -14,9 +14,10 @@ export async function recordVisit(userId: string) {
     },
   });
 
-  if (recentVisit) {
-    return { error: `Solo podés sumar una visita cada ${cooldownHours} horas.` };
-  }
+  // COMENTADO PARA TESTING:
+  // if (recentVisit) {
+  //   return { error: `Solo podés sumar una visita cada ${cooldownHours} horas.` };
+  // }
 
   const newVisit = await prisma.visit.create({
     data: { userId }
