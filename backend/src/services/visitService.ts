@@ -45,13 +45,6 @@ export async function recordVisit(userId: string, code?: string) {
   
   // Check if the user reached exactly 10 visits
   const totalVisits = currentVisits + 1;
-  let newCoupon = null;
   
-  if (totalVisits > 0 && totalVisits % 10 === 0) {
-    newCoupon = await prisma.coupon.create({
-      data: { userId }
-    });
-  }
-
-  return { newVisit, totalVisits, newCoupon };
+  return { newVisit, totalVisits };
 }

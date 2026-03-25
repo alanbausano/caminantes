@@ -4,14 +4,6 @@ export interface Visit {
   timestamp: string;
 }
 
-export interface Coupon {
-  id: string;
-  userId: string;
-  earnedAt: string;
-  isRedeemed: boolean;
-  redeemedAt: string | null;
-}
-
 export interface User {
   id: string;
   firstName: string;
@@ -23,7 +15,6 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   visits?: Visit[];
-  coupons?: Coupon[];
   redemptions?: { id: string, status: string, createdAt: string, processedAt?: string | null }[];
 }
 

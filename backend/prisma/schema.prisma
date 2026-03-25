@@ -18,7 +18,6 @@ model User {
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
   visits      Visit[]
-  coupons     Coupon[]
   redemptions RedemptionRequest[]
 }
 
@@ -29,14 +28,7 @@ model Visit {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Coupon {
-  id         String    @id @default(uuid())
-  userId     String
-  earnedAt   DateTime  @default(now())
-  isRedeemed Boolean   @default(false)
-  redeemedAt DateTime?
-  user       User      @relation(fields: [userId], references: [id])
-}
+
 
 model RedemptionRequest {
   id          String    @id @default(uuid())

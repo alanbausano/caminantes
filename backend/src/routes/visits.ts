@@ -11,13 +11,13 @@ router.get('/profile', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.id },
-      include: { visits: true, coupons: true, redemptions: true }
+      include: { visits: true, redemptions: true }
     });
     if (!user) return res.status(404).json({ error: 'No encontramos al usuario' });
     
     // We send back the user profile omitting sensitive data
-    const { email, firstName, lastName, phone, dob, visits, coupons, redemptions, isAdmin } = user;
-    res.json({ email, firstName, lastName, phone, dob, visits, coupons, redemptions, isAdmin });
+    const { email, firstName, lastName, phone, dob, visits, redemptions, isAdmin } = user;
+    res.json({ email, firstName, lastName, phone, dob, visits, redemptions, isAdmin });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Hubo un error en el servidor' });
