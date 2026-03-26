@@ -15,7 +15,7 @@ export default function MapPage() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: { xs: 2.5, sm: 4 }, flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Container maxWidth="sm" sx={{ py: { xs: 2.5, sm: 4 }, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
       <Box 
         component={motion.div} 
         initial={{ opacity: 0, y: -20 }}

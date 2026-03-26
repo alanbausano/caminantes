@@ -36,9 +36,10 @@ export default function MainLayout() {
       display: 'flex', 
       flexDirection: 'column',
       bgcolor: 'background.default',
-      minHeight: '100dvh'
+      height: '100dvh',
+      overflow: 'hidden'
     }}>
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', pb: { xs: 7, sm: 8 } }}>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', pb: { xs: 7, sm: 8 } }}>
         <Outlet />
       </Box>
       
