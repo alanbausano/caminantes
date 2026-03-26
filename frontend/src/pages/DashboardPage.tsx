@@ -83,11 +83,12 @@ export default function DashboardPage() {
 
   return (
     <Container maxWidth="sm" sx={{ 
-      py: { xs: 2, sm: 4 }, 
+      py: { xs: 1.5, sm: 4 }, 
       display: 'flex', 
       flexDirection: 'column', 
       flex: 1,
-      gap: { xs: 1.5, sm: 2 }
+      minHeight: 0,
+      gap: { xs: 1, sm: 2 }
     }}>
       {!isLoading && userData && !userData.isEmailVerified && (
         <Box 

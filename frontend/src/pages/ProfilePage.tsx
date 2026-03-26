@@ -25,13 +25,13 @@ export default function ProfilePage() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: { xs: 2.5, sm: 4 }, flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <Container maxWidth="sm" sx={{ py: { xs: 1.5, sm: 4 }, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
       <Box 
         component={motion.div} 
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
-        sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}
+        sx={{ mb: { xs: 2, sm: 4 }, display: 'flex', alignItems: 'center', gap: 2 }}
       >
         <Avatar 
           component={motion.div}
@@ -56,13 +56,13 @@ export default function ProfilePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.6, type: 'spring', stiffness: 80 }}
         elevation={12} 
-        sx={{ p: 3, borderRadius: 2, bgcolor: 'background.paper', mb: { xs: 0, sm: 2 } }}
+        sx={{ p: { xs: 2, sm: 3 }, borderRadius: 2, bgcolor: 'background.paper', mb: { xs: 0, sm: 2 } }}
       >
         <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, mb: 3 }}>
           Tus datos
         </Typography>
         
-        <Box component="form" autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Box component="form" autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2.5 } }}>
           <TextField 
             label="Nombre Completo" 
             value={userData ? `${userData.firstName} ${userData.lastName}` : ''}

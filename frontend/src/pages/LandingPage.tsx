@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Typography, Container, Box, Button, TextField, Paper, Tabs, Tab, CircularProgress, InputAdornment, IconButton } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/logo.png';
 import { useToast } from '../context/ToastContext';
@@ -13,6 +14,7 @@ import type { AxiosError } from 'axios';
 export default function LandingPage() {
   const [tab, setTab] = useState(1); // 0: Login, 1: Register
   const [showPassword, setShowPassword] = useState(false);
+  const isDesktop = useMediaQuery((theme) => theme.breakpoints.up('sm'));
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -208,7 +210,7 @@ export default function LandingPage() {
   const loading = registerMutation.isPending || loginMutation.isPending;
 
   return (
-    <Container maxWidth="sm" sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', pt: 4, mb: 6, pb: 10 }}>
+    <Container maxWidth="sm" sx={{ minHeight: '100svh', display: 'flex', flexDirection: 'column', pt: 4, mb: 6, pb: { xs: '10svh', sm: 10 } }}>
       {/* Hero Section */}
       <Box 
         component={motion.div} 
@@ -217,10 +219,10 @@ export default function LandingPage() {
         transition={{ duration: 0.8, ease: "easeOut" }}
         sx={{ textAlign: 'center', mb: 4 }}
       >
-        <Typography variant="h4" color="primary" gutterBottom sx={{ fontWeight: 800 }}>
+        <Typography variant={!isDesktop ? "h5" : "h4"} color="primary" gutterBottom sx={{ fontWeight: 800 }}>
           Los Caminantes Burger
         </Typography>
-        <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography variant={!isDesktop ? "subtitle2" : "subtitle1"} color="text.secondary" sx={{ mb: 3 }}>
           Sumate a nuestro club y ganá hamburguesas gratis.
         </Typography>
         <Box
@@ -257,13 +259,13 @@ export default function LandingPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.6 }}
         elevation={24}
-        sx={{ p: 4, borderRadius: 2, backgroundColor: 'background.paper', overflow: 'hidden' }}
+        sx={{ p: { xs: 2.5, sm: 4 }, borderRadius: 2, backgroundColor: 'background.paper', overflow: 'hidden' }}
       >
         <Tabs 
           value={tab} 
           onChange={(_, newValue) => setTab(newValue)} 
           variant="fullWidth" 
-          sx={{ mb: 3 }}
+          sx={{ mb: { xs: 2, sm: 3 } }}
           indicatorColor="primary"
           textColor="primary"
         >
@@ -271,7 +273,7 @@ export default function LandingPage() {
           <Tab label="Creá tu cuenta" sx={{ fontWeight: 'bold' }} />
         </Tabs>
 
-        <Box component="form" onSubmit={handleAuth} noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box component="form" onSubmit={handleAuth} noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.2, sm: 2 } }}>
           <AnimatePresence mode="popLayout">
             <motion.div
               key={tab === 0 ? 'login' : 'register'}
@@ -317,7 +319,7 @@ export default function LandingPage() {
                 onChange={handleInputChange}
                 autoComplete='off'
               />
-              {tab === 1 && (
+              {/* {tab === 1 && (
                 <TextField 
                   label="Número de Teléfono" 
                   name="phone"
@@ -329,7 +331,7 @@ export default function LandingPage() {
                   value={formData.phone}
                   onChange={handleInputChange}
                 />
-              )}
+              )} */}
               {tab === 1 && (
                 <TextField 
                   label="Fecha de Nacimiento" 
@@ -342,7 +344,8 @@ export default function LandingPage() {
                   helperText={formErrors.dob}
                   value={formData.dob}
                   onChange={handleInputChange}
-                  inputProps={{ style: { textAlign: 'left' } }}
+                  inputProps={{ style: { textAlign: 'left', paddingLeft: 10 } }}
+                  sx={{ '& input[type="date"]::-webkit-date-and-time-value': { textAlign: 'left' } }}
                 />
               )}
               <TextField 
@@ -374,12 +377,12 @@ export default function LandingPage() {
             color="primary" 
             size="large" 
             disabled={loading}
-            sx={{ mt: 3, py: 1.5, color: '#1A1A1A' }}
+            sx={{ mt: { xs: 1.5, sm: 3 }, py: 1.5, color: '#1A1A1A' }}
           >
             {loading ? <CircularProgress size={24} sx={{ color: '#1A1A1A' }} /> : (tab === 0 ? 'Ingresá' : 'Sumate ahora')}
           </Button>
 
-          <Box sx={{ mt: 3, textAlign: 'center' }}>
+          <Box sx={{ mt: { xs: 1, sm: 3 }, textAlign: 'center' }}>
             {tab === 1 ? (
               <Typography variant="body2" color="text.secondary">
                 ¿Ya sos parte del club?{' '}
