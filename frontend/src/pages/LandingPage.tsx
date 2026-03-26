@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Typography, Container, Box, Button, TextField, Paper, Tabs, Tab, CircularProgress } from '@mui/material';
+import { Typography, Container, Box, Button, TextField, Paper, Tabs, Tab, CircularProgress, InputAdornment, IconButton } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/logo.png';
 import { useToast } from '../context/ToastContext';
@@ -10,6 +12,7 @@ import type { AxiosError } from 'axios';
 
 export default function LandingPage() {
   const [tab, setTab] = useState(1); // 0: Login, 1: Register
+  const [showPassword, setShowPassword] = useState(false);
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -153,12 +156,19 @@ export default function LandingPage() {
             navigate('/dashboard', { replace: true });
           }
         },
-        onError: (error: AxiosError<{ error: string }>) => {
+        onError: (error: AxiosError<{ error: string; field?: 'email' | 'phone' }>) => {
           const backendError = error.response?.data?.error || '';
-          if (backendError.toLowerCase().includes('correo') || backendError.toLowerCase().includes('registrado')) {
+          const field = error.response?.data?.field;
+
+          if (field === 'email') {
+            setFormErrors(prev => ({ ...prev, email: backendError }));
+          } else if (field === 'phone') {
+            setFormErrors(prev => ({ ...prev, phone: backendError }));
+          } else if (backendError.toLowerCase().includes('correo') || backendError.toLowerCase().includes('registrado')) {
             setFormErrors(prev => ({ ...prev, email: 'Este correo ya está registrado' }));
+          } else {
+            showToast(backendError || 'Hubo un error al crear tu cuenta', 'error');
           }
-          showToast(backendError || 'Hubo un error al crear tu cuenta', 'error');
         }
       });
     } else { // Login
@@ -179,8 +189,17 @@ export default function LandingPage() {
             navigate('/dashboard', { replace: true });
           }
         },
-        onError: (error: AxiosError<{ error: string }>) => {
-          showToast(error.response?.data?.error || 'El correo o la contraseña no son correctos', 'error');
+        onError: (error: AxiosError<{ error: string; field?: 'email' | 'password' }>) => {
+          const backendError = error.response?.data?.error || 'El correo o la contraseña no son correctos';
+          const field = error.response?.data?.field;
+
+          if (field === 'email') {
+            setFormErrors(prev => ({ ...prev, email: backendError }));
+          } else if (field === 'password') {
+            setFormErrors(prev => ({ ...prev, password: backendError }));
+          } else {
+            showToast(backendError, 'error');
+          }
         }
       });
     }
@@ -189,7 +208,7 @@ export default function LandingPage() {
   const loading = registerMutation.isPending || loginMutation.isPending;
 
   return (
-    <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', pt: 4, pb: 6 }}>
+    <Container maxWidth="sm" sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', pt: 4, mb: 6, pb: 10 }}>
       {/* Hero Section */}
       <Box 
         component={motion.div} 
@@ -329,13 +348,22 @@ export default function LandingPage() {
               <TextField 
                 label="Contraseña" 
                 name="password"
-                type="password" 
+                type={showPassword ? 'text' : 'password'} 
                 variant="outlined" 
                 fullWidth 
                 error={!!formErrors.password}
                 helperText={formErrors.password}
                 value={formData.password}
                 onChange={handleInputChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" aria-label="toggle password visibility">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
               />
             </motion.div>
           </AnimatePresence>

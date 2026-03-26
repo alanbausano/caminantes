@@ -9,18 +9,17 @@
   color: rgba(255, 255, 255, 0.87);
   background-color: #0A0A0A;
 
-  font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
+html, body {
   margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  /* Prevent horizontal scroll */
-  overflow-x: hidden;
+  padding: 0;
+  background-color: #0A0A0A;
+  color: rgba(255, 255, 255, 0.87);
+  height: 100vh;
 }
 
 #root {

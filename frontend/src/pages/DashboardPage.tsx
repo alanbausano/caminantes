@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
 import { 
   Typography, Container, Box, Paper, Button, CircularProgress, 
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions 
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
+  Alert, AlertTitle
 } from '@mui/material';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import RedeemsIcon from '@mui/icons-material/CardGiftcard';
@@ -88,7 +89,21 @@ export default function DashboardPage() {
       flex: 1,
       gap: { xs: 1.5, sm: 2 }
     }}>
-      {/* ... Header Box stays same ... */}
+      {!isLoading && userData && !userData.isEmailVerified && (
+        <Box 
+          component={motion.div}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          transition={{ duration: 0.5 }}
+        >
+          <Alert severity="warning" sx={{ mb: 1, borderRadius: 2, alignItems: 'center' }}>
+            <AlertTitle sx={{ fontWeight: 'bold', mb: 0 }}>¡Revisá tu correo!</AlertTitle>
+            Te enviamos un link para activar tu cuenta. Revisá correo no deseado (SPAM) si no lo ves.
+          </Alert>
+        </Box>
+      )}
+
+      {/* Header Box */}
       <Box
         component={motion.div}
         initial={{ opacity: 0, y: -20 }}

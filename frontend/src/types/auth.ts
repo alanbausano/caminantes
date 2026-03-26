@@ -12,6 +12,7 @@ export interface User {
   phone: string;
   dob: string;
   isAdmin: boolean;
+  isEmailVerified: boolean;
   createdAt: string;
   updatedAt: string;
   visits?: Visit[];

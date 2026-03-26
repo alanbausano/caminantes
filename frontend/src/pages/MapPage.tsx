@@ -77,7 +77,7 @@ export default function MapPage() {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
           <AccessTimeIcon sx={{ color: 'text.disabled', flexShrink: 0 }} fontSize="small" />
           <Typography variant="body2" color="text.secondary">
-            Lun – Dom: 11:00 – 23:00
+            Viernes y Sábados de 20:00 a 12:30
           </Typography>
         </Box>
         

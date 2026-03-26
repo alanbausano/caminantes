@@ -10,6 +10,7 @@ import MapPage from './pages/MapPage';
 import ProfilePage from './pages/ProfilePage';
 import QRCallbackPage from './pages/QRCallbackPage';
 import AdminPage from './pages/AdminPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import MainLayout from './components/Layout/MainLayout';
 
@@ -36,6 +37,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/scan/:id" element={<QRCallbackPage />} />
+          <Route path="/verify" element={<VerifyEmailPage />} />
           <Route path="/admin" element={
             <ProtectedRoute requireAdmin={true}>
               <AdminPage />

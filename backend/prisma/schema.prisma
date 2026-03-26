@@ -15,16 +15,27 @@ model User {
   password    String?
   dob         DateTime
   isAdmin     Boolean             @default(false)
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  visits      Visit[]
-  redemptions RedemptionRequest[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  isEmailVerified    Boolean             @default(false)
+  visits             Visit[]
+  redemptions        RedemptionRequest[]
+  verificationTokens VerificationToken[]
 }
 
 model Visit {
   id        String   @id @default(uuid())
   userId    String
   timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
