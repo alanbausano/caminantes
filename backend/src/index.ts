@@ -16,6 +16,14 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'http://localhost:3001',
+  'http://192.168.1.1',
+  'http://192.168.1.2',
+  'http://192.168.1.3',
+  'http://192.168.1.3:5173',
+  'http://192.168.1.2:5173',
+  'http://192.168.1.1:5173',
+  'http://255.255.255.0:5173',
+  'http://255.255.255.0',
   process.env.FRONTEND_URL
 ].filter(Boolean) as string[];
 
