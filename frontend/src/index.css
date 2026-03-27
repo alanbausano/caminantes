@@ -19,7 +19,7 @@ html, body {
   padding: 0;
   background-color: #0A0A0A;
   color: rgba(255, 255, 255, 0.87);
-  height: 100vh;
+  min-height: 100svh;
 }
 
 #root {

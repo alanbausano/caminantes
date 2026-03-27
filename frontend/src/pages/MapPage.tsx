@@ -15,7 +15,7 @@ export default function MapPage() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: { xs: 2.5, sm: 4 }, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Container maxWidth="sm" sx={{ py: { xs: 2.5, sm: 4 }, flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
       <Box 
         component={motion.div} 
         initial={{ opacity: 0, y: -20 }}
@@ -77,7 +77,7 @@ export default function MapPage() {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
           <AccessTimeIcon sx={{ color: 'text.disabled', flexShrink: 0 }} fontSize="small" />
           <Typography variant="body2" color="text.secondary">
-            Viernes y Sábados de 20:00 a 12:30
+            Viernes y Sábados de 20:00 a 00:30
           </Typography>
         </Box>
         

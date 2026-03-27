@@ -87,7 +87,7 @@ export default function DashboardPage() {
       display: 'flex', 
       flexDirection: 'column', 
       flex: 1,
-      minHeight: 0,
+      height: '100vh',
       gap: { xs: 1, sm: 2 }
     }}>
       {!isLoading && userData && !userData.isEmailVerified && (
