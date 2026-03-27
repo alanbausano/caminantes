@@ -16,8 +16,8 @@ router.get('/profile', authenticateToken, async (req: AuthRequest, res) => {
     if (!user) return res.status(404).json({ error: 'No encontramos al usuario' });
     
     // We send back the user profile omitting sensitive data
-    const { email, firstName, lastName, phone, dob, visits, redemptions, isAdmin } = user;
-    res.json({ email, firstName, lastName, phone, dob, visits, redemptions, isAdmin });
+    const { email, firstName, lastName, dob, visits, redemptions, isAdmin } = user;
+    res.json({ email, firstName, lastName, dob, visits, redemptions, isAdmin });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Hubo un error en el servidor' });

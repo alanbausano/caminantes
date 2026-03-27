@@ -31,7 +31,7 @@ export const getPendingRedemptions = async () => {
     where: { status: 'PENDING' },
     include: { 
       user: {
-        select: { firstName: true, lastName: true, phone: true }
+        select: { firstName: true, lastName: true }
       } 
     },
     orderBy: { createdAt: 'desc' }
@@ -43,7 +43,7 @@ export const getCompletedRedemptions = async () => {
     where: { status: 'COMPLETED' },
     include: { 
       user: {
-        select: { firstName: true, lastName: true, phone: true }
+        select: { firstName: true, lastName: true }
       } 
     },
     orderBy: { processedAt: 'desc' }

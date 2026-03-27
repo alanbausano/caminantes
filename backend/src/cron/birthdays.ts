@@ -5,7 +5,7 @@ import { prisma } from '../db.js';
 interface BirthdayUser {
   id: string;
   email: string | null;
-  phone: string;
+
   firstName: string;
   dob: Date;
 }
@@ -27,7 +27,7 @@ export const initBirthdayCron = () => {
       // Postgres extract logic or we can fetch all and filter, 
       // but in Prisma we might need a raw query for month/day matching
       const users = await prisma.$queryRaw<BirthdayUser[]>`
-        SELECT id, email, phone, "firstName", dob
+        SELECT id, email, "firstName", dob
         FROM "User"
         WHERE EXTRACT(MONTH FROM dob) = ${targetMonth} 
           AND EXTRACT(DAY FROM dob) = ${targetDay}
@@ -40,7 +40,7 @@ export const initBirthdayCron = () => {
 
       for (const user of users) {
         // Here we would integrate Resend for Email and Twilio for WhatsApp
-        console.log(`Sending birthday greeting to ${user.firstName} at ${user.email} / ${user.phone}`);
+        console.log(`Sending birthday greeting to ${user.firstName} at ${user.email}`);
         // TODO: Implement actual Email / WhatsApp sending
       }
     } catch (error) {
