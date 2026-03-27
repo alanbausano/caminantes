@@ -79,14 +79,6 @@ export default function ProfilePage() {
             slotProps={{ input: { readOnly: true } }}
           />
           <TextField 
-            label="Número de Teléfono" 
-            value={userData?.phone || ''}
-            type="tel" 
-            variant="outlined" 
-            fullWidth 
-            slotProps={{ input: { readOnly: true } }}
-          />
-          <TextField 
             label="Fecha de Nacimiento" 
             type="text"
             value={userData?.dob ? new Date(userData.dob).toLocaleDateString() : ''}

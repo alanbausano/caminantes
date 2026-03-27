@@ -47,7 +47,6 @@ export default function LandingPage() {
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
     dob: '',
     password: ''
   });
@@ -56,13 +55,11 @@ export default function LandingPage() {
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
     dob: '',
     password: ''
   });
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePhone = (phone: string) => /^\d{10,15}$/.test(phone);
   const calculateAge = (dob: string) => {
     const birthDate = new Date(dob);
     const today = new Date();
@@ -79,7 +76,6 @@ export default function LandingPage() {
       firstName: '',
       lastName: '',
       email: '',
-      phone: '',
       dob: '',
       password: ''
     };
@@ -92,13 +88,6 @@ export default function LandingPage() {
       }
       if (!formData.lastName.trim()) {
         errors.lastName = 'El apellido es obligatorio';
-        isValid = false;
-      }
-      if (!formData.phone.trim()) {
-        errors.phone = 'El teléfono es obligatorio';
-        isValid = false;
-      } else if (!validatePhone(formData.phone)) {
-        errors.phone = 'Formato inválido (mínimo 10 dígitos)';
         isValid = false;
       }
       if (!formData.dob) {
@@ -164,8 +153,6 @@ export default function LandingPage() {
 
           if (field === 'email') {
             setFormErrors(prev => ({ ...prev, email: backendError }));
-          } else if (field === 'phone') {
-            setFormErrors(prev => ({ ...prev, phone: backendError }));
           } else if (backendError.toLowerCase().includes('correo') || backendError.toLowerCase().includes('registrado')) {
             setFormErrors(prev => ({ ...prev, email: 'Este correo ya está registrado' }));
           } else {
@@ -210,7 +197,7 @@ export default function LandingPage() {
   const loading = registerMutation.isPending || loginMutation.isPending;
 
   return (
-    <Container maxWidth="sm" sx={{ minHeight: '100svh', display: 'flex', flexDirection: 'column', pt: 4, mb: 6, pb: { xs: '10svh', sm: 10 } }}>
+    <Container maxWidth="sm" sx={{ minHeight: '100svh', display: 'flex', flexDirection: 'column', pt: 4, mb: { xs: 1, sm: 4 }, pb: { xs: '2svh', sm: 10 } }}>
       {/* Hero Section */}
       <Box 
         component={motion.div} 
@@ -319,19 +306,6 @@ export default function LandingPage() {
                 onChange={handleInputChange}
                 autoComplete='off'
               />
-              {/* {tab === 1 && (
-                <TextField 
-                  label="Número de Teléfono" 
-                  name="phone"
-                  type="tel" 
-                  variant="outlined" 
-                  fullWidth 
-                  error={!!formErrors.phone}
-                  helperText={formErrors.phone}
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                />
-              )} */}
               {tab === 1 && (
                 <TextField 
                   label="Fecha de Nacimiento" 
@@ -344,7 +318,7 @@ export default function LandingPage() {
                   helperText={formErrors.dob}
                   value={formData.dob}
                   onChange={handleInputChange}
-                  inputProps={{ style: { textAlign: 'left', paddingLeft: 10 } }}
+                  inputProps={{ style: { textAlign: 'left', paddingLeft: 10, marginRight: 10 } }}
                   sx={{ '& input[type="date"]::-webkit-date-and-time-value': { textAlign: 'left' } }}
                 />
               )}

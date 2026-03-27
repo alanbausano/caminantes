@@ -9,7 +9,6 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string | null;
-  phone: string;
   dob: string;
   isAdmin: boolean;
   isEmailVerified: boolean;
@@ -28,7 +27,6 @@ export interface RegisterData {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
   dob: string;
   password?: string;
   qrId?: string;

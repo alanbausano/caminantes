@@ -21,16 +21,11 @@ if (!googleClientId) {
 
 router.post('/register', async (req, res) => {
   try {
-    const { firstName, lastName, phone, dob, email, password, qrId } = req.body;
+    const { firstName, lastName, dob, email, password, qrId } = req.body;
     
     const userByEmail = await prisma.user.findUnique({ where: { email } });
     if (userByEmail) {
       return res.status(400).json({ error: 'Ya existe un usuario registrado con este correo', field: 'email' });
-    }
-
-    const userByPhone = await prisma.user.findUnique({ where: { phone } });
-    if (userByPhone) {
-      return res.status(400).json({ error: 'Este número de teléfono ya está registrado', field: 'phone' });
     }
 
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
@@ -39,7 +34,6 @@ router.post('/register', async (req, res) => {
       data: {
         firstName,
         lastName,
-        phone,
         dob: new Date(dob),
         email,
         password: hashedPassword,
@@ -109,7 +103,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/google', async (req, res) => {
   try {
-    const { token, phone, dob, qrId } = req.body as GoogleAuthRequest;
+    const { token, dob, qrId } = req.body as GoogleAuthRequest;
     if (!process.env.GOOGLE_CLIENT_ID) {
       throw new Error('GOOGLE_CLIENT_ID is not set in environment');
     }
@@ -138,7 +132,7 @@ router.post('/google', async (req, res) => {
     let user: User | null = await (prisma.user.findUnique({ where: { email: userEmail } }) as Promise<User | null>);
     
     if (!user) {
-      if (!phone || !dob) {
+      if (!dob) {
         return res.status(400).json({ requireMoreInfo: true, email: userEmail, firstName: given_name, lastName: family_name });
       }
       user = await (prisma.user.create({
@@ -146,7 +140,6 @@ router.post('/google', async (req, res) => {
           email: userEmail,
           firstName: given_name || '',
           lastName: family_name || '',
-          phone,
           dob: new Date(dob),
           isAdmin: false,
         }
