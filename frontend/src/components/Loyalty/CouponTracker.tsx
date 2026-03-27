@@ -33,7 +33,7 @@ export default function CouponTracker({ visits, targetVisits }: CouponTrackerPro
       
       <Box sx={{ 
         display: 'flex', 
-        justifyContent: 'flex-start', 
+        justifyContent: 'center', 
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: 2,
