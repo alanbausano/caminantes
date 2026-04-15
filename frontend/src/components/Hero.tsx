@@ -1,6 +1,7 @@
 import { Box, Typography, Button, Container } from '@mui/material';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
+import HeroBackground from './HeroBackground';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -24,34 +25,12 @@ export default function Hero() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'radial-gradient(circle at center, #1a1a1a 0%, #0A0A0A 100%)',
+        backgroundColor: '#0A0A0A',
         overflow: 'hidden',
         pt: 8
       }}
     >
-      {/* Subtle animated background blob */}
-      <Box
-        component={motion.div}
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3],
-          rotate: [0, 90, 0]
-        }}
-        transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-        sx={{
-          position: 'absolute',
-          width: '60vw',
-          height: '60vw',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,193,7,0.15) 0%, transparent 70%)',
-          top: '50%',
-          left: '50%',
-          x: '-50%',
-          y: '-50%',
-          zIndex: 0,
-          pointerEvents: 'none'
-        }}
-      />
+      <HeroBackground />
 
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
         <Box
@@ -142,17 +121,30 @@ export default function Hero() {
             <Button
               variant="contained"
               size="large"
-              component={motion.button}
+              component={motion.a}
+              href="https://www.pedidosya.com.ar/restaurantes/buenos-aires/los-caminantes-cd35e022-4177-4064-89ac-eea7c767c98b-menu"
+              target="_blank"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              sx={{ px: 5, py: 1.5, fontSize: '1.1rem' }}
+              sx={{ 
+                px: 5, 
+                py: 1.5, 
+                fontSize: '1.1rem',
+                color: '#0A0A0A',
+                fontWeight: 700,
+                '&:hover': {
+                  backgroundColor: 'primary.light',
+                  color: '#0A0A0A'
+                }
+              }}
             >
               Pedir Online
             </Button>
             <Button
               variant="outlined"
               size="large"
-              component={motion.button}
+              component={motion.a}
+              href="#menu"
               whileHover={{ scale: 1.05, borderColor: '#FFC107', color: '#FFC107' }}
               whileTap={{ scale: 0.95 }}
               sx={{

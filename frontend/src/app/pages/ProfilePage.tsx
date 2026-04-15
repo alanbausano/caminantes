@@ -21,7 +21,7 @@ export default function ProfilePage() {
   const handleLogout = () => {
     localStorage.clear(); // Wipe all stored data (token, user, etc.)
     queryClient.clear();  // Clear React Query cache so no stale data persists
-    navigate('/');
+    navigate('/app');
   };
 
   return (

@@ -22,12 +22,12 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
 
   if (!user) {
     // Redirect to landing if not logged in
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <Navigate to="/app" state={{ from: location }} replace />;
   }
 
   if (requireAdmin && !user.isAdmin) {
     // Redirect to dashboard if trying to access admin page without being admin
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/app/dashboard" replace />;
   }
 
   return <>{children}</>;

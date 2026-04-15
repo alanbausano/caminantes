@@ -1,4 +1,6 @@
-import { Box, Typography, Container, Stack } from '@mui/material';
+import { Box, Typography, Container, Stack, IconButton } from '@mui/material';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { motion } from 'framer-motion';
 
 export default function Footer() {
@@ -28,7 +30,7 @@ export default function Footer() {
             LOS CAMINANTES
           </Typography>
           <Typography color="text.secondary" sx={{ fontSize: '1.1rem', maxWidth: '500px' }}>
-            El viaje de mil millas comienza con el primer bocado.
+            Vení a probar nuestras hamburguesas.
           </Typography>
           
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 3, sm: 8 }} sx={{ mt: 2 }}>
@@ -37,9 +39,8 @@ export default function Footer() {
                 Ubicación
               </Typography>
               <Typography color="text.secondary">
-                123 Burger Lane<br />
-                Distrito Gastronómico, MVD 11200<br />
-                Uruguay
+                Bulnes 998<br />
+                Buenos Aires, Argentina
               </Typography>
             </Box>
             <Box>
@@ -47,9 +48,21 @@ export default function Footer() {
                 Horarios
               </Typography>
               <Typography color="text.secondary">
-                Lun - Jue: 11:30 AM - 11:00 PM<br />
-                Vie - Dom: 11:30 AM - 1:00 AM
+                Vie - Sab: 20:00 - 00:00
               </Typography>
+            </Box>
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, color: '#FFF' }}>
+                Contacto
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+                <IconButton component="a" href="https://wa.me/5491123541273" target="_blank" sx={{ color: 'text.secondary', '&:hover': { color: '#25D366' } }}>
+                  <WhatsAppIcon />
+                </IconButton>
+                <IconButton component="a" href="https://www.instagram.com/loscaminantesburger/" target="_blank" sx={{ color: 'text.secondary', '&:hover': { color: '#E1306C' } }}>
+                  <InstagramIcon />
+                </IconButton>
+              </Box>
             </Box>
           </Stack>
         </Stack>

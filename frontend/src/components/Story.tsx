@@ -1,6 +1,14 @@
+import { useState, useEffect } from 'react';
 import { Box, Typography, Container, Grid } from '@mui/material';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
+
+import storyImg1 from '@/assets/photos/LOSCAMI-6-story.jpg';
+import storyImg2 from '@/assets/photos/LOSCAMI-9-story.jpg';
+import storyImg3 from '@/assets/photos/LOSCAMI-11-story.jpg';
+import storyImg4 from '@/assets/photos/LOSCAMI-19-story.jpg';
+
+const storyImages = [storyImg1, storyImg2, storyImg3, storyImg4];
 
 const textVariants: Variants = {
   hidden: { opacity: 0, y: 50 },
@@ -8,8 +16,17 @@ const textVariants: Variants = {
 };
 
 export default function Story() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % storyImages.length);
+    }, 4000); // 2.5 second auto-switch delay
+    
+    return () => clearInterval(timer);
+  }, []);
   return (
-    <Box sx={{ py: { xs: 10, md: 15 }, backgroundColor: '#0a0a0a' }}>
+    <Box sx={{ py: { xs: 10, md: 15 }, backgroundColor: '#0a0a0a' }} id="historia">
       <Container maxWidth="lg">
         <Grid container spacing={6} alignItems="center">
           <Grid size={{ xs: 12, md: 6 }}>
@@ -74,19 +91,26 @@ export default function Story() {
                 boxShadow: '0 20px 40px rgba(255,193,7,0.15)'
               }}
             >
-              <img
-                src="/story_burger_flame.png"
-                alt="Burger over flames"
-                style={{
-                  width: 'calc(100% - 8px)',
-                  height: 'calc(100% - 8px)',
-                  objectFit: 'cover',
-                  position: 'absolute',
-                  top: '4px',
-                  left: '4px',
-                  borderRadius: '12px'
-                }}
-              />
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={currentImageIndex}
+                  src={storyImages[currentImageIndex]}
+                  alt={`Story memory ${currentImageIndex + 1}`}
+                  initial={{ opacity: 0, scale: 1.1 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  style={{
+                    width: 'calc(100% - 8px)',
+                    height: 'calc(100% - 8px)',
+                    objectFit: 'cover',
+                    position: 'absolute',
+                    top: '4px',
+                    left: '4px',
+                    borderRadius: '12px'
+                  }}
+                />
+              </AnimatePresence>
             </Box>
           </Grid>
         </Grid>

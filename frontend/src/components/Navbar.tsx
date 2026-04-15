@@ -7,11 +7,13 @@ import { Link } from 'react-router-dom';
 
 const pages = [
   { name: 'Inicio', path: '/' },
-  { name: 'Historia', path: '#historia' },
-  { name: 'Menú', path: '#menu' },
-  { name: 'Ubicación', path: '#ubicacion' },
+  { name: 'Historia', path: '/#historia' },
+  { name: 'Menú', path: '/#menu' },
+  { name: 'Ubicación', path: '/#ubicacion' },
   { name: 'Fidelidad', path: '/app', isInternal: true }
 ];
+
+const pedidosURL = 'https://www.pedidosya.com.ar/restaurantes/buenos-aires/los-caminantes-cd35e022-4177-4064-89ac-eea7c767c98b-menu'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -96,8 +98,23 @@ export default function Navbar() {
               {page.name}
             </Typography>
           ))}
-          <Button variant="contained" color="primary" sx={{ ml: 2 }}>
-            Pedir Ahora
+          <Button 
+            variant="contained" 
+            color="primary" 
+            component="a" 
+            href={pedidosURL} 
+            target="_blank"
+            sx={{ 
+              ml: 2,
+              color: '#0A0A0A',
+              fontWeight: 700,
+              '&:hover': {
+                backgroundColor: 'primary.light',
+                color: '#0A0A0A'
+              }
+            }} 
+          >
+            Pedir Online
           </Button>
         </Box>
 
@@ -144,8 +161,23 @@ export default function Navbar() {
                   {page.name}
                 </Typography>
               ))}
-              <Button variant="contained" fullWidth sx={{ mt: 1 }}>
-                Pedir Ahora
+              <Button 
+                variant="contained" 
+                fullWidth 
+                component="a" 
+                href={pedidosURL} 
+                target="_blank"
+                sx={{ 
+                  mt: 1,
+                  color: '#0A0A0A',
+                  fontWeight: 700,
+                  '&:hover': {
+                    backgroundColor: 'primary.light',
+                    color: '#0A0A0A'
+                  }
+                }} 
+              >
+                Pedir Online
               </Button>
             </Box>
           </Box>

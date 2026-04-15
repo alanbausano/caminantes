@@ -172,7 +172,7 @@ export default function AdminPage() {
                 boxShadow: '0px 10px 30px rgba(0,0,0,0.1)'
               }}>
                 {token ? (
-                  <QRCode value={`${window.location.origin}/scan/${token}`} size={200} />
+                  <QRCode value={`${window.location.origin}/app/scan/${token}`} size={200} />
                 ) : (
                   <Box sx={{ width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <CircularProgress />

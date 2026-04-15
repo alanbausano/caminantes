@@ -15,7 +15,7 @@ export default function Location() {
   };
 
   return (
-    <Box sx={{ py: 15, backgroundColor: '#0a0a0a' }} id="location">
+    <Box sx={{ py: 15, backgroundColor: '#0a0a0a' }} id="ubicacion">
       <Container maxWidth="lg">
         <Box textAlign="center" mb={8}>
           <Typography
@@ -67,8 +67,7 @@ export default function Location() {
                 <Box>
                    <Typography variant="h6" sx={{ fontWeight: 800, mb: 0.5, color: '#FFF' }}>Horarios</Typography>
                    <Typography variant="body1" color="text.secondary">
-                    Jueves a Sábados: 20:00 a 00:30<br/>
-                    Domingos: 20:00 a 00:00
+                    Vie - Sab: 20:00 - 00:00
                    </Typography>
                 </Box>
               </Box>

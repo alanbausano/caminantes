@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Typography, Container, Box, Paper, Button, CircularProgress, 
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
@@ -16,6 +17,7 @@ import { useProfile } from '../hooks/useAuth';
 import type { AxiosError } from 'axios';
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const { data: userData, isLoading } = useProfile();
   const scanMutation = useScanVisit();
   const redeemMutation = useRedeemReward();
@@ -115,6 +117,9 @@ export default function DashboardPage() {
         <Box
           component={motion.div}
           animate={{ scale: [1, 1.05, 1] }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => navigate('/')}
           transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
           sx={{
             width: 64,
@@ -128,6 +133,7 @@ export default function DashboardPage() {
             justifyContent: 'center',
             p: 0.75,
             flexShrink: 0,
+            cursor: 'pointer'
           }}
         >
           <Box component="img" src={logo} alt="Logo" sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />

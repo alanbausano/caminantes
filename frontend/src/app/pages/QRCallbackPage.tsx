@@ -19,7 +19,7 @@ export default function QRCallbackPage() {
       if (!token) {
         // Redirect to landing page with the QR ID to handle it after login/register
         showToast('Registrate o ingresá si ya tenés una cuenta para registrar tu visita!', 'info');
-        navigate(`/?qrId=${id}`, { replace: true });
+        navigate(`/app?qrId=${id}`, { replace: true });
         return;
       }
       if (processedRef.current) return;
@@ -28,11 +28,11 @@ export default function QRCallbackPage() {
       mutate(id, {
         onSuccess: () => {
           showToast('Registramos tu visita con éxito!', 'success');
-          navigate('/dashboard', { replace: true });
+          navigate('/app/dashboard', { replace: true });
         },
         onError: (error: AxiosError<{ error: string }>) => {
           showToast(error.response?.data?.error || 'Hubo un error al validar el código', 'error');
-          navigate('/dashboard', { replace: true });
+          navigate('/app/dashboard', { replace: true });
         }
       });
     }

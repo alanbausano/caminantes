@@ -32,9 +32,9 @@ export default function LandingPage() {
       try {
         const user = JSON.parse(userStr);
         if (user.isAdmin) {
-          navigate('/admin', { replace: true });
+          navigate('/app/admin', { replace: true });
         } else {
-          navigate('/dashboard', { replace: true });
+          navigate('/app/dashboard', { replace: true });
         }
       } catch (e) {
         localStorage.removeItem('user');
@@ -142,9 +142,9 @@ export default function LandingPage() {
           
           showToast('¡Cuenta creada con éxito!', 'success');
           if (data.user.isAdmin) {
-            navigate('/admin', { replace: true });
+            navigate('/app/admin', { replace: true });
           } else {
-            navigate('/dashboard', { replace: true });
+            navigate('/app/dashboard', { replace: true });
           }
         },
         onError: (error: AxiosError<{ error: string; field?: 'email' | 'phone' }>) => {
@@ -173,9 +173,9 @@ export default function LandingPage() {
 
           showToast('¡Qué bueno verte de nuevo!', 'success');
           if (data.user.isAdmin) {
-            navigate('/admin', { replace: true });
+            navigate('/app/admin', { replace: true });
           } else {
-            navigate('/dashboard', { replace: true });
+            navigate('/app/dashboard', { replace: true });
           }
         },
         onError: (error: AxiosError<{ error: string; field?: 'email' | 'password' }>) => {
@@ -216,6 +216,9 @@ export default function LandingPage() {
           component={motion.div}
           initial={{ scale: 0.85, opacity: 0, rotate: -5 }}
           animate={{ scale: 1, opacity: 1, rotate: [0, 2, -2, 0] }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => navigate('/')}
           transition={{
             scale: { delay: 0.2, duration: 0.8, type: 'spring', stiffness: 80 },
             opacity: { delay: 0.2, duration: 0.8 },
@@ -233,6 +236,7 @@ export default function LandingPage() {
             justifyContent: 'center',
             p: 1.5,
             mx: 'auto',
+            cursor: 'pointer'
           }}
         >
           <Box component="img" src={logo} alt="Los Caminantes Burger" sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />

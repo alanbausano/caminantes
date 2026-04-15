@@ -56,7 +56,7 @@ function LoyaltyApp() {
           </Route>
 
           {/* Fallback to app landing within the app subfolder */}
-          <Route path="*" element={<Navigate to="" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     </ToastProvider>
       </ThemeProvider>

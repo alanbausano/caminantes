@@ -57,7 +57,7 @@ export default function VerifyEmailPage() {
           <Typography variant="body1" color="text.secondary" sx={{ mb: 5, fontSize: '1.2rem' }}>
             {message}
           </Typography>
-          <Button variant="contained" size="large" onClick={() => navigate('/dashboard')} sx={{ borderRadius: 2, px: 5, fontSize: '1.1rem', py: 1.5 }}>
+          <Button variant="contained" size="large" onClick={() => navigate('/app/dashboard')} sx={{ borderRadius: 2, px: 5, fontSize: '1.1rem', py: 1.5 }}>
             Entrar a la App
           </Button>
         </Box>
@@ -70,7 +70,7 @@ export default function VerifyEmailPage() {
           <Typography variant="body1" color="text.secondary" sx={{ mb: 5, fontSize: '1.2rem' }}>
             {message}
           </Typography>
-          <Button variant="outlined" size="large" onClick={() => navigate('/')} sx={{ borderRadius: 2, px: 5, fontSize: '1.1rem', py: 1.5 }}>
+          <Button variant="outlined" size="large" onClick={() => navigate('/app')} sx={{ borderRadius: 2, px: 5, fontSize: '1.1rem', py: 1.5 }}>
             Volver al Inicio
           </Button>
         </Box>

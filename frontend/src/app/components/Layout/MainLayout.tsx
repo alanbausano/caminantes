@@ -13,10 +13,10 @@ export default function MainLayout() {
 
   useEffect(() => {
     switch (location.pathname) {
-      case '/dashboard': setValue(0); break;
-      case '/menu': setValue(1); break;
-      case '/map': setValue(2); break;
-      case '/profile': setValue(3); break;
+      case '/app/dashboard': setValue(0); break;
+      case '/app/menu': setValue(1); break;
+      case '/app/map': setValue(2); break;
+      case '/app/profile': setValue(3); break;
       default: setValue(0);
     }
   }, [location.pathname]);
@@ -24,10 +24,10 @@ export default function MainLayout() {
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
     switch (newValue) {
-      case 0: navigate('/dashboard'); break;
-      case 1: navigate('/menu'); break;
-      case 2: navigate('/map'); break;
-      case 3: navigate('/profile'); break;
+      case 0: navigate('/app/dashboard'); break;
+      case 1: navigate('/app/menu'); break;
+      case 2: navigate('/app/map'); break;
+      case 3: navigate('/app/profile'); break;
     }
   };
 
