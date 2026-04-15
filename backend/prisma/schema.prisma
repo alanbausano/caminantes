@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String              @id @default(uuid())
+  email       String?             @unique
+  firstName   String
+  lastName    String
+  password    String?
+  dob         DateTime
+  isAdmin     Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  isEmailVerified    Boolean             @default(false)
+  visits             Visit[]
+  redemptions        RedemptionRequest[]
+  verificationTokens VerificationToken[]
+}
+
+model Visit {
+  id        String   @id @default(uuid())
+  userId    String
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+
+model RedemptionRequest {
+  id          String    @id @default(uuid())
+  userId      String
+  status      String    @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  createdAt   DateTime  @default(now())
+  processedAt DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
