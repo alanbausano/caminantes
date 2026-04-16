@@ -79,7 +79,7 @@ export default function Hero() {
               mb: 2
             }}
           >
-            Probá la Leyenda
+            Vení a probar un sabor único
           </Typography>
 
           <Typography
@@ -95,7 +95,7 @@ export default function Hero() {
               WebkitTextFillColor: 'transparent',
             }}
           >
-            La Hamburguesa Definitiva
+            Hamburguesas de Asado
           </Typography>
 
           <Typography
@@ -110,7 +110,7 @@ export default function Hero() {
               fontWeight: 400
             }}
           >
-            Hechas a mano con ingredientes premium, asadas a la perfección y servidas con pura felicidad. Tu nuevo lugar favorito.
+            No picamos carne al azar. Seleccionamos cortes de asado, respetando los tiempos de plancha para que cada mordida tenga el alma de una parrilla encendida.
           </Typography>
 
           <Box

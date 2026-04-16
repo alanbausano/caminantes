@@ -86,6 +86,7 @@ export default function Navbar() {
               component={page.isInternal ? Link : motion.a}
               to={page.isInternal ? page.path : undefined}
               href={!page.isInternal ? page.path : undefined}
+              target={page.isInternal ? '_blank' : undefined}
               whileHover={{ color: '#FFD54F', y: -2 }}
               sx={{ 
                 cursor: 'pointer', 
@@ -104,7 +105,7 @@ export default function Navbar() {
             component="a" 
             href={pedidosURL} 
             target="_blank"
-            sx={{ 
+            sx={{
               ml: 2,
               color: '#0A0A0A',
               fontWeight: 700,
@@ -149,6 +150,7 @@ export default function Navbar() {
                   component={page.isInternal ? Link : 'a'}
                   to={page.isInternal ? page.path : undefined}
                   href={!page.isInternal ? page.path : undefined}
+                  target={page.isInternal ? '_blank' : undefined}
                   onClick={() => setMobileOpen(false)}
                   sx={{ 
                     fontWeight: 600, 

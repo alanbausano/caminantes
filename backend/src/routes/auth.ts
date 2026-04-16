@@ -41,6 +41,9 @@ router.post('/register', async (req, res) => {
       } as Prisma.UserCreateInput
     }) as unknown as Promise<User>);
 
+    // WELCOME VISIT: Every newly registered user gets 1 free visit loaded instantly!
+    await prisma.visit.create({ data: { userId: newUser.id } });
+
     // If registered via QR, record the first visit
     if (qrId) {
       await recordVisit(newUser.id, qrId);
@@ -144,6 +147,9 @@ router.post('/google', async (req, res) => {
           isAdmin: false,
         }
       }) as unknown as Promise<User>);
+
+      // WELCOME VISIT: Every newly registered user gets 1 free visit loaded instantly!
+      await prisma.visit.create({ data: { userId: user.id } });
     }
 
     // If logged in via QR, record the visit

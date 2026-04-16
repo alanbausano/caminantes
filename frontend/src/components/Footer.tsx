@@ -30,7 +30,7 @@ export default function Footer() {
             LOS CAMINANTES
           </Typography>
           <Typography color="text.secondary" sx={{ fontSize: '1.1rem', maxWidth: '500px' }}>
-            Vení a probar nuestras hamburguesas.
+            Vení a probar nuestras hamburguesas de asado.
           </Typography>
           
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 3, sm: 8 }} sx={{ mt: 2 }}>
