@@ -82,7 +82,7 @@ export default function CouponTracker({ visits, targetVisits }: CouponTrackerPro
       <Typography variant="body2" sx={{ mt: 3, textAlign: 'center', color: 'primary.main', fontWeight: 'bold' }}>
         {visits >= targetVisits 
           ? '¡Ya podés retirar tu hamburguesa gratis!' 
-          : `¡Te faltan solo ${Math.max(0, targetVisits - visits)} visitas para tu burger GRATIS!`}
+          : `¡Te faltan solo ${Math.max(0, targetVisits - visits)} visitas para tu hamburguesa GRATIS!`}
       </Typography>
     </Box>
   );

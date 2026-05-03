@@ -143,7 +143,7 @@ export default function DashboardPage() {
             ¡Hola, {firstName}! 👋
           </Typography>
           <Typography variant="subtitle1" color="text.secondary" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
-            ¿Estás listo para otra burger?
+            ¿Estás para otra hamburguesa?
           </Typography>
         </Box>
       </Box>
@@ -204,7 +204,7 @@ export default function DashboardPage() {
                   animation: hasPendingRedemption ? 'none' : 'pulse 2s infinite'
                 }}
               >
-                {hasPendingRedemption ? 'Canje Solicitado' : '¡Canjear Burger Gratis!'}
+                {hasPendingRedemption ? 'Canje Solicitado' : '¡Canjear Hamburguesa Gratis!'}
               </Button>
             </Box>
           )}
@@ -234,10 +234,10 @@ export default function DashboardPage() {
         onClose={() => !redeemMutation.isPending && setRedeemOpen(false)}
         PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
       >
-        <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>¿Canjeamos tu burger?</DialogTitle>
+        <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>¿Canjeamos tu hamburguesa gratis?</DialogTitle>
         <DialogContent>
           <DialogContentText textAlign="center">
-            Estás por pedir tu burger gratis. <br/>
+            Estás por pedir tu hamburguesa gratis. <br/>
             <strong>Avisá en caja para que lo procesen.</strong>
           </DialogContentText>
         </DialogContent>

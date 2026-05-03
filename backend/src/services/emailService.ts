@@ -22,7 +22,7 @@ export async function sendWelcomeEmail(email: string, name: string, verification
       </div>
       
       <div style="background-color: #1A1A1A; padding: 30px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
-        <p style="color: #E0E0E0; font-size: 16px; line-height: 1.6; margin-top: 0;">Estamos felices de sumarte a nuestro club de beneficios. Cada vez que nos visites vas a sumar un sello, y cada 10 visitas te vas a llevar una <strong>burger completamente GRATIS</strong>.</p>
+        <p style="color: #E0E0E0; font-size: 16px; line-height: 1.6; margin-top: 0;">Estamos felices de sumarte a nuestro club de beneficios. Cada vez que nos visites vas a sumar un sello, y cada 10 visitas te vas a llevar una <strong>hamburguesa completamente GRATIS</strong>.</p>
         
         <p style="color: #E0E0E0; font-size: 16px; line-height: 1.6;">Para asegurar tu cuenta y habilitar los canjes, necesitamos que confirmes tu correo electrónico haciendo click acá abajo:</p>
         

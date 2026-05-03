@@ -31,7 +31,7 @@ export default function MenuPage() {
           Nuestro Menú
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
-          Elegí tu burger favorita.
+          Elegí tu hamburguesa favorita.
         </Typography>
       </Box>
 

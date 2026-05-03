@@ -57,7 +57,7 @@ export default function Location() {
                     Los Caminantes
                   </Typography>
                   <Typography variant="h6" color="text.secondary">
-                    Bulnes 998<br/>Buenos Aires, Argentina
+                    Lavalle 3702<br/>Buenos Aires, Argentina
                   </Typography>
                 </Box>
               </Box>

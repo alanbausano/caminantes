@@ -1,23 +1,27 @@
 import { useState, useEffect } from 'react';
-import { Box, AppBar, Toolbar, Typography, Button, IconButton } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Button, IconButton, Dialog, Zoom } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
+import DownloadIcon from '@mui/icons-material/Download';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import menuImage from '@/assets/menu_main.jpeg';
 
 const pages = [
   { name: 'Inicio', path: '/' },
+  { name: 'Hamburguesas', path: '/#menu' },
   { name: 'Historia', path: '/#historia' },
-  { name: 'Menú', path: '/#menu' },
   { name: 'Ubicación', path: '/#ubicacion' },
-  { name: 'Fidelidad', path: '/app', isInternal: true }
+  { name: 'Menú', isMenuAction: true },
+  { name: 'Registrate', path: '/app', isInternal: true }
 ];
 
-const pedidosURL = 'https://www.pedidosya.com.ar/restaurantes/buenos-aires/los-caminantes-cd35e022-4177-4064-89ac-eea7c767c98b-menu'
+const pedidosURL = 'https://www.pedidosya.com.ar/restaurantes/buenos-aires/los-caminantes-16513ef5-0d16-45e3-96bd-2e21fa293456-menu?origin=shop_list'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -25,19 +29,30 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleDownload = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const link = document.createElement('a');
+    link.href = menuImage;
+    link.download = 'Menu-Los-Caminantes.jpeg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <AppBar
       position="fixed"
       component={motion.nav}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
       sx={{
         background: scrolled ? 'rgba(10, 10, 10, 0.85)' : 'transparent',
         backdropFilter: scrolled ? 'blur(10px)' : 'none',
         boxShadow: scrolled ? '0px 4px 20px rgba(0,0,0,0.5)' : 'none',
         transition: 'background 0.3s ease, box-shadow 0.3s ease',
         borderBottom: scrolled ? '1px solid rgba(255,255,255,0.05)' : '1px solid transparent',
+        zIndex: 1100
       }}
     >
       <Toolbar sx={{ justifyContent: 'space-between', padding: '0.5rem 1rem' }}>
@@ -85,13 +100,14 @@ export default function Navbar() {
               key={page.name}
               component={page.isInternal ? Link : motion.a}
               to={page.isInternal ? page.path : undefined}
-              href={!page.isInternal ? page.path : undefined}
+              href={!page.isInternal && !page.isMenuAction ? page.path : undefined}
               target={page.isInternal ? '_blank' : undefined}
+              onClick={() => page.isMenuAction && setMenuOpen(true)}
               whileHover={{ color: '#FFD54F', y: -2 }}
-              sx={{ 
-                cursor: 'pointer', 
-                fontWeight: 600, 
-                fontSize: '0.95rem', 
+              sx={{
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '0.95rem',
                 color: page.isInternal ? 'primary.main' : '#FFF',
                 textDecoration: 'none'
               }}
@@ -99,11 +115,11 @@ export default function Navbar() {
               {page.name}
             </Typography>
           ))}
-          <Button 
-            variant="contained" 
-            color="primary" 
-            component="a" 
-            href={pedidosURL} 
+          <Button
+            variant="contained"
+            color="primary"
+            component="a"
+            href={pedidosURL}
             target="_blank"
             sx={{
               ml: 2,
@@ -113,7 +129,7 @@ export default function Navbar() {
                 backgroundColor: 'primary.light',
                 color: '#0A0A0A'
               }
-            }} 
+            }}
           >
             Pedir Online
           </Button>
@@ -145,16 +161,21 @@ export default function Navbar() {
           >
             <Box sx={{ display: 'flex', flexDirection: 'column', p: 2, gap: 2 }}>
               {pages.map((page) => (
-                <Typography 
-                  key={page.name} 
+                <Typography
+                  key={page.name}
                   component={page.isInternal ? Link : 'a'}
                   to={page.isInternal ? page.path : undefined}
-                  href={!page.isInternal ? page.path : undefined}
+                  href={!page.isInternal && !page.isMenuAction ? page.path : undefined}
                   target={page.isInternal ? '_blank' : undefined}
-                  onClick={() => setMobileOpen(false)}
-                  sx={{ 
-                    fontWeight: 600, 
-                    fontSize: '1.1rem', 
+                  onClick={() => {
+                    if (page.isMenuAction) {
+                      setMenuOpen(true);
+                    }
+                    setMobileOpen(false);
+                  }}
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: '1.1rem',
                     textAlign: 'center',
                     color: page.isInternal ? 'primary.main' : '#FFF',
                     textDecoration: 'none'
@@ -163,13 +184,13 @@ export default function Navbar() {
                   {page.name}
                 </Typography>
               ))}
-              <Button 
-                variant="contained" 
-                fullWidth 
-                component="a" 
-                href={pedidosURL} 
+              <Button
+                variant="contained"
+                fullWidth
+                component="a"
+                href={pedidosURL}
                 target="_blank"
-                sx={{ 
+                sx={{
                   mt: 1,
                   color: '#0A0A0A',
                   fontWeight: 700,
@@ -177,7 +198,7 @@ export default function Navbar() {
                     backgroundColor: 'primary.light',
                     color: '#0A0A0A'
                   }
-                }} 
+                }}
               >
                 Pedir Online
               </Button>
@@ -185,6 +206,81 @@ export default function Navbar() {
           </Box>
         )}
       </AnimatePresence>
+
+      {/* Full Menu Dialog (Same as Loyalty App) */}
+      <Dialog
+        fullScreen
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        TransitionComponent={Zoom}
+        PaperProps={{
+          sx: {
+            bgcolor: 'rgba(0,0,0,0.95)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 0,
+            overflow: 'hidden'
+          }
+        }}
+      >
+        <Box sx={{ position: 'fixed', top: 16, right: 16, display: 'flex', gap: 1, zIndex: 1200 }}>
+          <IconButton
+            onClick={handleDownload}
+            sx={{
+              color: 'white',
+              bgcolor: 'rgba(255,255,255,0.1)',
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' },
+              backdropFilter: 'blur(5px)'
+            }}
+          >
+            <DownloadIcon />
+          </IconButton>
+          <IconButton
+            onClick={() => setMenuOpen(false)}
+            sx={{
+              color: 'white',
+              bgcolor: 'rgba(255,255,255,0.1)',
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' },
+              backdropFilter: 'blur(5px)'
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        <Box
+          component="img"
+          src={menuImage}
+          alt="Menú Los Caminantes"
+          onClick={() => setMenuOpen(false)}
+          sx={{
+            maxWidth: '100%',
+            maxHeight: '100%',
+            objectFit: 'contain',
+            cursor: 'zoom-out',
+            p: 2
+          }}
+        />
+
+        {/* Floating Download Button for Mobile */}
+        <Box sx={{ position: 'fixed', bottom: 32, left: '50%', transform: 'translateX(-50%)', display: { xs: 'block', md: 'none' } }}>
+          <Button
+            variant="contained"
+            startIcon={<DownloadIcon />}
+            onClick={handleDownload}
+            sx={{
+              borderRadius: 28,
+              px: 4,
+              py: 1.5,
+              fontWeight: 700,
+              boxShadow: '0 8px 32px rgba(255, 193, 7, 0.3)'
+            }}
+          >
+            Descargar Menú
+          </Button>
+        </Box>
+      </Dialog>
     </AppBar>
   );
 }

@@ -126,9 +126,9 @@ export default function Hero() {
               target="_blank"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              sx={{ 
-                px: 5, 
-                py: 1.5, 
+              sx={{
+                px: 5,
+                py: 1.5,
                 fontSize: '1.1rem',
                 color: '#0A0A0A',
                 fontWeight: 700,
@@ -144,7 +144,7 @@ export default function Hero() {
               variant="outlined"
               size="large"
               component={motion.a}
-              href="#menu"
+              href="/app"
               whileHover={{ scale: 1.05, borderColor: '#FFC107', color: '#FFC107' }}
               whileTap={{ scale: 0.95 }}
               sx={{
@@ -153,7 +153,7 @@ export default function Hero() {
                 color: '#FFF'
               }}
             >
-              Ver Menú
+              Hamburguesas gratis
             </Button>
           </Box>
         </Box>

@@ -26,7 +26,7 @@ export default function MapPage() {
           Encontranos
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
-          Pasá a buscar tu burger.
+          Pasá a buscar tu hamburguesa.
         </Typography>
       </Box>
 
@@ -69,7 +69,7 @@ export default function MapPage() {
               Los Caminantes Burger
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Bulnes 998, Buenos Aires
+              Lavalle 3702, Buenos Aires
             </Typography>
           </Box>
         </Box>

@@ -39,7 +39,7 @@ export default function Footer() {
                 Ubicación
               </Typography>
               <Typography color="text.secondary">
-                Bulnes 998<br />
+                Lavalle 3702<br />
                 Buenos Aires, Argentina
               </Typography>
             </Box>

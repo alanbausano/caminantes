@@ -19,7 +19,7 @@ export async function recordVisit(userId: string, code?: string) {
   // Check if they already have 10 visits
   const currentVisits = await prisma.visit.count({ where: { userId } });
   if (currentVisits >= 10) {
-    return { error: '¡Ya tenés 10 visitas! Pedí tu burger gratis antes de seguir sumando.' };
+    return { error: '¡Ya tenés 10 visitas! Pedí tu hamburguesa gratis antes de seguir sumando.' };
   }
 
   // Cooldown logic: max 1 visit per 8 hours

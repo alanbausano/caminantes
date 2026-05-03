@@ -11,8 +11,8 @@ export default function LandingPage() {
     <Box sx={{ overflowX: 'hidden' }}>
       <Navbar />
       <Hero />
-      <Story />
       <FeaturedMenu />
+      <Story />
       <Location />
       <Footer />
     </Box>

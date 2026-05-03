@@ -22,7 +22,7 @@ export default function Story() {
     const timer = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % storyImages.length);
     }, 4000); // 2.5 second auto-switch delay
-    
+
     return () => clearInterval(timer);
   }, []);
   return (
@@ -55,21 +55,30 @@ export default function Story() {
                 variants={textVariants}
                 sx={{ fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3.5rem' }, fontWeight: 800, mb: 4, lineHeight: 1.2 }}
               >
-                Nacidas de la pasión, creadas con fuego.
+                La Evolución de Los Caminantes
               </Typography>
               <Typography
                 component={motion.p}
                 variants={textVariants}
                 sx={{ color: 'text.secondary', fontSize: '1.1rem', mb: 3 }}
               >
-                Los Caminantes empezó como una idea humilde: crear una hamburguesa que se enfoque genuinamente en la esencia del sabor. Sin trucos, solo ingredientes locales de primera calidad y un tostado perfecto a la parrilla.
+                Hace años, Los Caminantes comenzó como una cervecería tradicional en el corazón de Almagro,
+                un refugio para los vecinos del barrio.
+              </Typography>
+              <Typography
+                component={motion.p}
+                variants={textVariants}
+                sx={{ color: 'text.secondary', fontSize: '1.1rem', mb: 3 }}
+              >
+                Con el tiempo, evolucionamos. Escuchamos a nuestros clientes, nos reinventamos y decidimos
+                fusionar lo que nos apasiona: nuestro bar de siempre y las hamburguesas premium.
               </Typography>
               <Typography
                 component={motion.p}
                 variants={textVariants}
                 sx={{ color: 'text.secondary', fontSize: '1.1rem' }}
               >
-                Cada bocado es un viaje—un recorrido a través de nuestra dedicación para lograr la máxima experiencia de confort que siempre te dejará con ganas de más.
+                Hoy podés disfrutar de nuestras hamburguesas en nuestro local, pedirlas a través de PedidosYa o Rappi.
               </Typography>
             </Box>
           </Grid>
