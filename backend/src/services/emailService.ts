@@ -1,47 +1,25 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 // ---------------------------------------------------------------------------
-// Transporter — built once at module load time.
-// All credentials are read from environment variables so they never
-// appear in source code.
+// Resend Client — built once at module load time.
 // ---------------------------------------------------------------------------
 
 const {
-  SMTP_HOST,
-  SMTP_PORT,
-  SMTP_USER,
-  SMTP_PASS,
-  SMTP_FROM,
+  RESEND_API_KEY,
+  SMTP_FROM, // We'll repurpose this as the sender address
 } = process.env;
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true, // Use SSL/TLS
-  auth: {
-    user: SMTP_USER,
-    pass: SMTP_PASS,
-  },
-  socketTimeout: 10000, // 10 seconds
-  connectionTimeout: 10000,
-});
+const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 
 console.log(`[MailService] Using FRONTEND_URL: ${process.env.FRONTEND_URL || 'http://localhost:5173 (Default)'}`);
 
-if (SMTP_USER && SMTP_PASS) {
-  transporter.verify((error) => {
-    if (error) {
-      console.error('[MailService] SMTP Connection Error:', error);
-      console.error('[MailService] Make sure you are using a Google App Password, NOT your normal password.');
-    } else {
-      console.log('[MailService] SMTP Connection Verified ✓ - Ready to send emails');
-    }
-  });
+if (!resend) {
+  console.warn('[MailService] RESEND_API_KEY is NOT configured. Emails will be skipped.');
 } else {
-  console.warn('[MailService] SMTP is NOT configured. Check your production environment variables (SMTP_USER, SMTP_PASS).');
+  console.log('[MailService] Resend initialized ✓');
 }
 
-const DEFAULT_FROM = SMTP_FROM ?? `Los Caminantes Burger <${SMTP_USER}>`;
+const DEFAULT_FROM = SMTP_FROM ?? 'onboarding@resend.dev';
 
 // ---------------------------------------------------------------------------
 // Generic sendEmail — the single entry-point for all outgoing emails.
@@ -54,25 +32,28 @@ export interface SendEmailOptions {
 }
 
 export async function sendEmail({ to, subject, html }: SendEmailOptions): Promise<void> {
-  if (!transporter) {
-    console.warn(
-      '[MailService] SMTP is not configured (SMTP_HOST / SMTP_USER / SMTP_PASS missing). Email skipped.',
-    );
+  if (!resend) {
+    console.warn('[MailService] Resend not initialized. Email skipped.');
     return;
   }
 
   try {
-    console.log(`[MailService] Attempting to send email to: ${to}...`);
-    const info = await transporter.sendMail({
+    console.log(`[MailService] Attempting to send email via Resend API to: ${to}...`);
+    const { data, error } = await resend.emails.send({
       from: DEFAULT_FROM,
       to,
       subject,
       html,
     });
-    console.log(`[MailService] Email sent ✓  to=${to}  messageId=${info.messageId}`);
+
+    if (error) {
+      console.error('[MailService] Resend API Error:', error);
+      return;
+    }
+
+    console.log(`[MailService] Email sent successfully ✓ id=${data?.id}`);
   } catch (error) {
-    console.error('[MailService] Failed to send email:', error);
-    // Do NOT re-throw — email failures should never crash the request.
+    console.error('[MailService] Failed to send email via Resend:', error);
   }
 }
 
