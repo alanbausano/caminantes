@@ -14,22 +14,22 @@ const {
   SMTP_FROM,
 } = process.env;
 
-const isConfigured = !!(SMTP_HOST && SMTP_USER && SMTP_PASS);
+const transporter = nodemailer.createTransport({
+  host: SMTP_HOST,
+  port: parseInt(SMTP_PORT || '587'),
+  secure: SMTP_PORT === '465',
+  auth: {
+    user: SMTP_USER,
+    pass: SMTP_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false
+  }
+});
 
-const transporter = isConfigured
-  ? nodemailer.createTransport({
-      host: SMTP_HOST,
-      port: Number(SMTP_PORT ?? 587),
-      secure: Number(SMTP_PORT ?? 587) === 465, 
-      auth: {
-        user: SMTP_USER,
-        pass: SMTP_PASS,
-      },
-    })
-  : null;
+console.log(`[MailService] Using FRONTEND_URL: ${process.env.FRONTEND_URL || 'http://localhost:5173 (Default)'}`);
 
-// Verify connection on startup
-if (transporter) {
+if (SMTP_HOST && SMTP_USER && SMTP_PASS) {
   transporter.verify((error) => {
     if (error) {
       console.error('[MailService] SMTP Connection Error:', error);
