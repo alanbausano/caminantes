@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import { adminMiddleware } from '../middleware/admin.js';
 import { createRedemptionRequest, getPendingRedemptions, getCompletedRedemptions, completeRedemption } from '../services/redemptionService.js';
+import { prisma } from '../db.js';
 
 const router = Router();
 
@@ -9,6 +10,12 @@ const router = Router();
 router.post('/', authenticateToken, async (req, res) => {
   try {
     const userId = (req as any).user.id;
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user?.isEmailVerified) {
+      return res.status(403).json({ error: 'Primero tenés que verificar tu correo para canjear premios.' });
+    }
+
     const redemption = await createRedemptionRequest(userId);
     res.status(201).json(redemption);
   } catch (error: any) {

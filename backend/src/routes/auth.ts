@@ -61,16 +61,15 @@ router.post('/register', async (req, res) => {
           expiresAt
         }
       });
+
       // Asynchronous non-blocking dispatch
       sendWelcomeEmail(email, firstName, verificationToken).catch(console.error);
     }
 
-    console.log(`User registered: ${newUser.email}, isAdmin: ${newUser.isAdmin}`);
     const token = jwt.sign({ id: newUser.id, isAdmin: !!newUser.isAdmin }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, user: newUser } as AuthResponse);
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Hubo un error al crear tu cuenta';
-    console.error('Registration error:', error);
+    console.error('[Auth] Registration error:', error);
     res.status(500).json({ error: 'No pudimos crear tu cuenta. Por favor, intentá de nuevo.' });
   }
 });
@@ -94,12 +93,10 @@ router.post('/login', async (req, res) => {
       await recordVisit(user.id, qrId);
     }
 
-    console.log(`User logged in: ${user.email}, isAdmin: ${user.isAdmin}`);
     const token = jwt.sign({ id: user.id, isAdmin: !!user.isAdmin }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, user } as AuthResponse);
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Hubo un error al iniciar sesión';
-    console.error('Login error:', error);
+    console.error('[Auth] Login error:', error);
     res.status(500).json({ error: 'No pudimos iniciar sesión. Por favor, intentá de nuevo.' });
   }
 });
@@ -131,9 +128,9 @@ router.post('/google', async (req, res) => {
     }
     
     const userEmail = email as string;
-    
     let user: User | null = await (prisma.user.findUnique({ where: { email: userEmail } }) as Promise<User | null>);
     
+    // NEW USER via Google
     if (!user) {
       if (!dob) {
         return res.status(400).json({ requireMoreInfo: true, email: userEmail, firstName: given_name, lastName: family_name });
@@ -145,22 +142,26 @@ router.post('/google', async (req, res) => {
           lastName: family_name || '',
           dob: new Date(dob),
           isAdmin: false,
+          isEmailVerified: true // Google emails are pre-verified
         }
       }) as unknown as Promise<User>);
 
-      // WELCOME VISIT: Every newly registered user gets 1 free visit loaded instantly!
+      // WELCOME VISIT
       await prisma.visit.create({ data: { userId: user.id } });
+      
+      // SEND WELCOME EMAIL (onboarding info)
+      sendWelcomeEmail(userEmail, user.firstName, 'google-verified').catch(console.error);
     }
 
     // If logged in via QR, record the visit
     if (qrId && user) {
       await recordVisit((user as User).id, qrId);
     }
+    
     const jwtToken = jwt.sign({ id: user.id, isAdmin: !!(user as User).isAdmin }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token: jwtToken, user: user as User } as AuthResponse);
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Hubo un error al entrar con Google';
-    console.error('Google auth error:', error);
+    console.error('[Auth] Google auth error:', error);
     res.status(500).json({ error: 'No pudimos entrar con Google. Por favor, intentá de nuevo.' });
   }
 });

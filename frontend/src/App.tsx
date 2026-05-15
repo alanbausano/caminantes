@@ -14,11 +14,16 @@ function App() {
       <Route path="/map" element={<Navigate to="/app/map" replace />} />
       <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
       <Route path="/admin" element={<Navigate to="/app/admin" replace />} />
-      <Route path="/verify" element={<Navigate to="/app/verify" replace />} />
+      <Route path="/verify" element={<NavigateToVerify />} />
       <Route path="/scan/:id" element={<NavigateToScan />} />
     </Routes>
   );
 }
+
+const NavigateToVerify = () => {
+  const { search } = window.location;
+  return <Navigate to={`/app/verify${search}`} replace />;
+};
 
 const NavigateToScan = () => {
   const { id } = useParams();

@@ -16,10 +16,10 @@ export async function recordVisit(userId: string, code?: string) {
     return { error: 'Este código QR expiró por seguridad. Pedíle al cajero que te muestre uno nuevo.' };
   }
 
-  // Check if they already have 10 visits
+  // Check if they already have 5 visits
   const currentVisits = await prisma.visit.count({ where: { userId } });
-  if (currentVisits >= 10) {
-    return { error: '¡Ya tenés 10 visitas! Pedí tu hamburguesa gratis antes de seguir sumando.' };
+  if (currentVisits >= 5) {
+    return { error: '¡Ya tenés 5 visitas! Pedí tu hamburguesa gratis antes de seguir sumando.' };
   }
 
   // Cooldown logic: max 1 visit per 8 hours
@@ -43,7 +43,7 @@ export async function recordVisit(userId: string, code?: string) {
     data: { userId }
   });
   
-  // Check if the user reached exactly 10 visits
+  // Check if the user reached exactly 5 visits
   const totalVisits = currentVisits + 1;
   
   return { newVisit, totalVisits };

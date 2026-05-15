@@ -1,13 +1,13 @@
 import { prisma } from '../db.js';
 
 export const createRedemptionRequest = async (userId: string) => {
-  // 1. Verify user has at least 10 visits
+  // 1. Verify user has at least 5 visits
   const visits = await prisma.visit.findMany({
     where: { userId }
   });
 
-  if (visits.length < 10) {
-    throw new Error('No tenés suficientes visitas para canjear un premio (mínimo 10)');
+  if (visits.length < 5) {
+    throw new Error('No tenés suficientes visitas para canjear un premio (mínimo 5)');
   }
 
   // 2. Check if there's already a pending request

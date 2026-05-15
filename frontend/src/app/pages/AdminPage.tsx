@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import QRCodeLib from 'react-qr-code';
-import { 
-  Container, Box, Typography, Paper, CircularProgress, 
+import {
+  Container, Box, Typography, Paper, CircularProgress,
   Tabs, Tab, List, ListItem, ListItemText, Divider, Button, IconButton,
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
 } from '@mui/material';
@@ -12,7 +12,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import { motion, AnimatePresence } from 'framer-motion';
-import logo from '../assets/logo.png';
+import logo from '@/assets/logo.png';
 import { usePendingRedemptions, useCompleteRedemption, useCompletedRedemptions } from '../hooks/useVisits';
 import { useToast } from '../context/ToastContext';
 
@@ -49,14 +49,14 @@ export default function AdminPage() {
   const [tabValue, setTabValue] = useState(0);
   const [token, setToken] = useState<string>('');
   const [timeLeft, setTimeLeft] = useState<number>(30);
-  
+
   // Confirm Dialog State
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedRedemption, setSelectedRedemption] = useState<{ id: string, name: string } | null>(null);
 
   const { data: redemptions, isLoading: redemptionsLoading, refetch, isRefetching } = usePendingRedemptions();
   const { data: completedRedemptions, isLoading: completedLoading, refetch: refetchCompleted, isRefetching: isCompletedRefetching } = useCompletedRedemptions();
-  
+
   const completeMutation = useCompleteRedemption();
   const { showToast } = useToast();
 
@@ -120,9 +120,9 @@ export default function AdminPage() {
       </Box>
 
       <Paper elevation={4} sx={{ borderRadius: 4, overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Tabs 
-          value={tabValue} 
-          onChange={handleTabChange} 
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
           variant="fullWidth"
           indicatorColor="primary"
           textColor="primary"
@@ -156,7 +156,7 @@ export default function AdminPage() {
               >
                 <Box component="img" src={logo} alt="Logo" sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </Box>
-              
+
               <Typography variant="h5" gutterBottom sx={{ fontWeight: 700 }}>
                 Código de Visita
               </Typography>
@@ -164,10 +164,10 @@ export default function AdminPage() {
                 Mostrá este código para que los clientes sumen visitas.
               </Typography>
 
-              <Box sx={{ 
-                bgcolor: 'white', 
-                p: 2, 
-                borderRadius: 4, 
+              <Box sx={{
+                bgcolor: 'white',
+                p: 2,
+                borderRadius: 4,
                 mb: 4,
                 boxShadow: '0px 10px 30px rgba(0,0,0,0.1)'
               }}>
@@ -181,9 +181,9 @@ export default function AdminPage() {
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <CircularProgress 
-                  variant="determinate" 
-                  value={(timeLeft / 30) * 100} 
+                <CircularProgress
+                  variant="determinate"
+                  value={(timeLeft / 30) * 100}
                   size={24}
                   thickness={5}
                   color={timeLeft <= 5 ? 'error' : 'primary'}
@@ -215,16 +215,16 @@ export default function AdminPage() {
                 <AnimatePresence initial={false}>
                   {redemptions && redemptions.length > 0 ? (
                     redemptions.map((red, index) => (
-                      <Box 
-                        key={red.id} 
+                      <Box
+                        key={red.id}
                         component={motion.div}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <ListItem 
-                          sx={{ 
+                        <ListItem
+                          sx={{
                             px: 0, py: 2,
                             flexDirection: { xs: 'column', sm: 'row' },
                             alignItems: { xs: 'flex-start', sm: 'center' },
@@ -277,7 +277,7 @@ export default function AdminPage() {
                 Historial de Entregados
               </Typography>
             </Box>
-            
+
             {completedLoading ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
                 <CircularProgress />
@@ -287,8 +287,8 @@ export default function AdminPage() {
                 {completedRedemptions && completedRedemptions.length > 0 ? (
                   completedRedemptions.map((red, index) => (
                     <Box key={red.id}>
-                      <ListItem 
-                        sx={{ 
+                      <ListItem
+                        sx={{
                           px: 2, py: 1.5,
                           flexDirection: { xs: 'column', sm: 'row' },
                           alignItems: { xs: 'flex-start', sm: 'center' },
@@ -311,8 +311,8 @@ export default function AdminPage() {
                           }
                         />
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: { sm: 'auto' } }}>
-                           <TaskAltIcon color="success" fontSize="small" />
-                           <Typography variant="body2" color="success.main" sx={{ fontWeight: 'bold' }}>Entregado</Typography>
+                          <TaskAltIcon color="success" fontSize="small" />
+                          <Typography variant="body2" color="success.main" sx={{ fontWeight: 'bold' }}>Entregado</Typography>
                         </Box>
                       </ListItem>
                     </Box>
@@ -339,21 +339,21 @@ export default function AdminPage() {
         </DialogTitle>
         <DialogContent>
           <DialogContentText textAlign="center">
-            ¿Confirmás que le entregaste la hamburguesa gratis a <strong>{selectedRedemption?.name}</strong>? <br/><br/>
+            ¿Confirmás que le entregaste la hamburguesa gratis a <strong>{selectedRedemption?.name}</strong>? <br /><br />
             Esta acción no se puede deshacer y reseteará sus visitas.
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center', px: 3, pb: 2, gap: 1 }}>
-          <Button 
-            onClick={() => setConfirmOpen(false)} 
+          <Button
+            onClick={() => setConfirmOpen(false)}
             disabled={completeMutation.isPending}
             sx={{ fontWeight: 'bold', color: 'text.secondary' }}
           >
             Cancelar
           </Button>
-          <Button 
-            onClick={confirmComplete} 
-            variant="contained" 
+          <Button
+            onClick={confirmComplete}
+            variant="contained"
             color="success"
             disabled={completeMutation.isPending}
             sx={{ borderRadius: 2, px: 3, fontWeight: 'bold' }}

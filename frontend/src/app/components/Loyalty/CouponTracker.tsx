@@ -30,10 +30,10 @@ export default function CouponTracker({ visits, targetVisits }: CouponTrackerPro
       <Typography variant="h6" color="text.secondary" gutterBottom sx={{ fontWeight: 600 }}>
         Tu Progreso
       </Typography>
-      
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
+
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: 2,
@@ -44,7 +44,7 @@ export default function CouponTracker({ visits, targetVisits }: CouponTrackerPro
           const isFilled = i < visits;
           const isTarget = i === targetVisits - 1;
           const isLastFilled = isFilled && i === visits - 1; // Highlight exactly the newest coupon
-          
+
           return (
             <Box
               key={i}
@@ -57,8 +57,8 @@ export default function CouponTracker({ visits, targetVisits }: CouponTrackerPro
               }}
               transition={{ duration: isLastFilled ? 1 : 0.4, ease: "backOut" }}
               sx={{
-                width: { xs: 42, sm: 48 },
-                height: { xs: 42, sm: 48 },
+                width: { xs: 45, sm: 65 },
+                height: { xs: 45, sm: 65 },
                 borderRadius: '50%',
                 display: 'flex',
                 justifyContent: 'center',
@@ -80,8 +80,8 @@ export default function CouponTracker({ visits, targetVisits }: CouponTrackerPro
       </Box>
 
       <Typography variant="body2" sx={{ mt: 3, textAlign: 'center', color: 'primary.main', fontWeight: 'bold' }}>
-        {visits >= targetVisits 
-          ? '¡Ya podés retirar tu hamburguesa gratis!' 
+        {visits >= targetVisits
+          ? '¡Ya podés retirar tu hamburguesa gratis!'
           : `¡Te faltan solo ${Math.max(0, targetVisits - visits)} visitas para tu hamburguesa GRATIS!`}
       </Typography>
     </Box>

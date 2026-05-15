@@ -16,8 +16,8 @@ router.get('/profile', authenticateToken, async (req: AuthRequest, res) => {
     if (!user) return res.status(404).json({ error: 'No encontramos al usuario' });
     
     // We send back the user profile omitting sensitive data
-    const { email, firstName, lastName, dob, visits, redemptions, isAdmin } = user;
-    res.json({ email, firstName, lastName, dob, visits, redemptions, isAdmin });
+    const { email, firstName, lastName, dob, visits, redemptions, isAdmin, isEmailVerified } = user;
+    res.json({ email, firstName, lastName, dob, visits, redemptions, isAdmin, isEmailVerified });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Hubo un error en el servidor' });
@@ -29,6 +29,12 @@ router.post('/scan', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user!.id;
     const { code } = req.body;
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user?.isEmailVerified) {
+      return res.status(403).json({ error: '¡Casi listo! Primero verificá tu correo para seguir sumando visitas.' });
+    }
+
     console.log(`[SCAN] User ${userId} scanning code: ${code || 'NO_CODE'}`);
     
     const result = await recordVisit(userId, code);

@@ -5,7 +5,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { motion, AnimatePresence } from 'framer-motion';
-import logo from '../assets/logo.png';
+import logo from '@/assets/logo.png';
 import { useToast } from '../context/ToastContext';
 import { useRegister, useLogin } from '../hooks/useAuth';
 import { useQueryClient } from '@tanstack/react-query';
@@ -23,7 +23,7 @@ export default function LandingPage() {
 
   const registerMutation = useRegister();
   const loginMutation = useLogin();
-  
+
   // Auto-redirect if already logged in
   useEffect(() => {
     const userStr = localStorage.getItem('user');
@@ -42,7 +42,7 @@ export default function LandingPage() {
       }
     }
   }, [navigate]);
-  
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -139,7 +139,7 @@ export default function LandingPage() {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
           queryClient.invalidateQueries({ queryKey: ['profile'] });
-          
+
           showToast('¡Cuenta creada con éxito!', 'success');
           if (data.user.isAdmin) {
             navigate('/app/admin', { replace: true });
@@ -199,8 +199,8 @@ export default function LandingPage() {
   return (
     <Container maxWidth="sm" sx={{ minHeight: '100svh', display: 'flex', flexDirection: 'column', pt: 4, mb: { xs: 1, sm: 4 }, pb: { xs: '2svh', sm: 10 } }}>
       {/* Hero Section */}
-      <Box 
-        component={motion.div} 
+      <Box
+        component={motion.div}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
@@ -252,10 +252,10 @@ export default function LandingPage() {
         elevation={24}
         sx={{ p: { xs: 2.5, sm: 4 }, borderRadius: 2, backgroundColor: 'background.paper', overflow: 'hidden' }}
       >
-        <Tabs 
-          value={tab} 
-          onChange={(_, newValue) => setTab(newValue)} 
-          variant="fullWidth" 
+        <Tabs
+          value={tab}
+          onChange={(_, newValue) => setTab(newValue)}
+          variant="fullWidth"
           sx={{ mb: { xs: 2, sm: 3 } }}
           indicatorColor="primary"
           textColor="primary"
@@ -276,21 +276,21 @@ export default function LandingPage() {
             >
               {tab === 1 && (
                 <>
-                  <TextField 
-                    label="Nombre" 
+                  <TextField
+                    label="Nombre"
                     name="firstName"
-                    variant="outlined" 
-                    fullWidth 
+                    variant="outlined"
+                    fullWidth
                     error={!!formErrors.firstName}
                     helperText={formErrors.firstName}
                     value={formData.firstName}
                     onChange={handleInputChange}
                   />
-                  <TextField 
-                    label="Apellido" 
+                  <TextField
+                    label="Apellido"
                     name="lastName"
-                    variant="outlined" 
-                    fullWidth 
+                    variant="outlined"
+                    fullWidth
                     error={!!formErrors.lastName}
                     helperText={formErrors.lastName}
                     value={formData.lastName}
@@ -298,12 +298,12 @@ export default function LandingPage() {
                   />
                 </>
               )}
-              <TextField 
-                label="Correo Electrónico" 
+              <TextField
+                label="Correo Electrónico"
                 name="email"
-                type="email" 
-                variant="outlined" 
-                fullWidth 
+                type="email"
+                variant="outlined"
+                fullWidth
                 error={!!formErrors.email}
                 helperText={formErrors.email}
                 value={formData.email}
@@ -311,13 +311,13 @@ export default function LandingPage() {
                 autoComplete='off'
               />
               {tab === 1 && (
-                <TextField 
-                  label="Fecha de Nacimiento" 
+                <TextField
+                  label="Fecha de Nacimiento"
                   name="dob"
-                  type="date" 
-                  variant="outlined" 
+                  type="date"
+                  variant="outlined"
                   InputLabelProps={{ shrink: true }}
-                  fullWidth 
+                  fullWidth
                   error={!!formErrors.dob}
                   helperText={formErrors.dob}
                   value={formData.dob}
@@ -326,12 +326,12 @@ export default function LandingPage() {
                   sx={{ '& input[type="date"]::-webkit-date-and-time-value': { textAlign: 'left' } }}
                 />
               )}
-              <TextField 
-                label="Contraseña" 
+              <TextField
+                label="Contraseña"
                 name="password"
-                type={showPassword ? 'text' : 'password'} 
-                variant="outlined" 
-                fullWidth 
+                type={showPassword ? 'text' : 'password'}
+                variant="outlined"
+                fullWidth
                 error={!!formErrors.password}
                 helperText={formErrors.password}
                 value={formData.password}
@@ -349,11 +349,11 @@ export default function LandingPage() {
             </motion.div>
           </AnimatePresence>
 
-          <Button 
-            type="submit" 
-            variant="contained" 
-            color="primary" 
-            size="large" 
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
             disabled={loading}
             sx={{ mt: { xs: 1.5, sm: 3 }, py: 1.5, color: '#1A1A1A' }}
           >
@@ -364,13 +364,13 @@ export default function LandingPage() {
             {tab === 1 ? (
               <Typography variant="body2" color="text.secondary">
                 ¿Ya sos parte del club?{' '}
-                <Typography 
+                <Typography
                   component="span"
                   variant="body2"
-                  onClick={() => setTab(0)} 
-                  sx={{ 
+                  onClick={() => setTab(0)}
+                  sx={{
                     color: 'primary.main',
-                    fontWeight: 'bold', 
+                    fontWeight: 'bold',
                     cursor: 'pointer',
                     ml: 0.5,
                     '&:hover': { textDecoration: 'underline' }
@@ -382,13 +382,13 @@ export default function LandingPage() {
             ) : (
               <Typography variant="body2" color="text.secondary">
                 ¿Todavía no tenés tu cuenta?{' '}
-                <Typography 
+                <Typography
                   component="span"
                   variant="body2"
-                  onClick={() => setTab(1)} 
-                  sx={{ 
+                  onClick={() => setTab(1)}
+                  sx={{
                     color: 'primary.main',
-                    fontWeight: 'bold', 
+                    fontWeight: 'bold',
                     cursor: 'pointer',
                     ml: 0.5,
                     '&:hover': { textDecoration: 'underline' }

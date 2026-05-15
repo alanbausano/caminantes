@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Container, Typography, CircularProgress, Box, Button } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -15,8 +15,12 @@ export default function VerifyEmailPage() {
   const [message, setMessage] = useState('');
   const { showToast } = useToast();
   const queryClient = useQueryClient();
+  const hasCalled = useRef(false);
 
   useEffect(() => {
+    if (!token || hasCalled.current) return;
+    hasCalled.current = true;
+
     if (!token) {
       setStatus('error');
       setMessage('Vínculo inválido. No se encontró el token de verificación de seguridad.');
@@ -70,7 +74,19 @@ export default function VerifyEmailPage() {
           <Typography variant="body1" color="text.secondary" sx={{ mb: 5, fontSize: '1.2rem' }}>
             {message}
           </Typography>
-          <Button variant="outlined" size="large" onClick={() => navigate('/app')} sx={{ borderRadius: 2, px: 5, fontSize: '1.1rem', py: 1.5 }}>
+          <Button 
+            variant="contained" 
+            size="large" 
+            onClick={() => navigate('/app')} 
+            sx={{ 
+              borderRadius: 2, 
+              px: 5, 
+              fontSize: '1.1rem', 
+              py: 1.5,
+              fontWeight: 'bold',
+              color: '#1A1A1A' // Contrast text for primary yellow
+            }}
+          >
             Volver al Inicio
           </Button>
         </Box>

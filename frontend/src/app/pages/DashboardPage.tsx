@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Typography, Container, Box, Paper, Button, CircularProgress, 
+import {
+  Typography, Container, Box, Paper, Button, CircularProgress,
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
   Alert, AlertTitle
 } from '@mui/material';
@@ -10,7 +10,7 @@ import RedeemsIcon from '@mui/icons-material/CardGiftcard';
 import CouponTracker from '../components/Loyalty/CouponTracker';
 import QRScannerDialog from '../components/Scanner/QRScannerDialog';
 import { motion, AnimatePresence } from 'framer-motion';
-import logo from '../assets/logo.png';
+import logo from '@/assets/logo.png';
 import { useToast } from '../context/ToastContext';
 import { useScanVisit, useRedeemReward } from '../hooks/useVisits';
 import { useProfile } from '../hooks/useAuth';
@@ -25,11 +25,11 @@ export default function DashboardPage() {
   const [redeemOpen, setRedeemOpen] = useState(false);
   const [isProcessingScan, setIsProcessingScan] = useState(false);
   const { showToast } = useToast();
-  const targetVisits = 10;
+  const targetVisits = 5;
 
   const handleScanSuccess = useCallback((code: string) => {
     console.log("QR Scan detected raw code:", code);
-    
+
     // Extract ID if it's a URL (e.g., http://domain.com/scan/ID)
     let finalCode = code;
     if (code.includes('/scan/')) {
@@ -39,7 +39,7 @@ export default function DashboardPage() {
     }
 
     setIsProcessingScan(true);
-    
+
     scanMutation.mutate(finalCode, {
       onSuccess: (data) => {
         console.log("Scan request success:", data);
@@ -84,16 +84,16 @@ export default function DashboardPage() {
   const hasPendingRedemption = userData?.redemptions?.some((r: any) => r.status === 'PENDING') || false;
 
   return (
-    <Container maxWidth="sm" sx={{ 
-      py: { xs: 1.5, sm: 4 }, 
-      display: 'flex', 
-      flexDirection: 'column', 
+    <Container maxWidth="sm" sx={{
+      py: { xs: 1.5, sm: 4 },
+      display: 'flex',
+      flexDirection: 'column',
       flex: 1,
       height: '100vh',
       gap: { xs: 1, sm: 2 }
     }}>
       {!isLoading && userData && !userData.isEmailVerified && (
-        <Box 
+        <Box
           component={motion.div}
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
@@ -148,15 +148,15 @@ export default function DashboardPage() {
         </Box>
       </Box>
 
-      <Paper 
+      <Paper
         component={motion.div}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2, duration: 0.6 }}
-        elevation={24} 
-        sx={{ 
-          p: { xs: 2, sm: 3 }, 
-          borderRadius: 2, 
+        elevation={24}
+        sx={{
+          p: { xs: 2, sm: 3 },
+          borderRadius: 2,
           bgcolor: 'background.paper',
           flexShrink: 0,
           mt: 5
@@ -165,7 +165,7 @@ export default function DashboardPage() {
         <CouponTracker visits={visitsCount} targetVisits={targetVisits} />
       </Paper>
 
-      <Box 
+      <Box
         component={motion.div}
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -184,7 +184,7 @@ export default function DashboardPage() {
               <Button
                 fullWidth
                 variant="contained"
-                disabled={hasPendingRedemption}
+                disabled={hasPendingRedemption || !userData?.isEmailVerified}
                 size="large"
                 startIcon={<RedeemsIcon />}
                 onClick={() => setRedeemOpen(true)}
@@ -192,19 +192,22 @@ export default function DashboardPage() {
                   py: { xs: 1.5, sm: 2 },
                   fontSize: '1.1rem',
                   fontWeight: 'bold',
-                  bgcolor: hasPendingRedemption ? '#A17A00' : '#FFC107',
-                  color: hasPendingRedemption ? 'rgba(255, 255, 255, 0.9)' : '#1A1A1A',
-                  '&:hover': { bgcolor: hasPendingRedemption ? '#A17A00' : '#FFD54F' },
+                  bgcolor: (hasPendingRedemption || !userData?.isEmailVerified) ? '#A17A00' : '#FFC107',
+                  color: (hasPendingRedemption || !userData?.isEmailVerified) ? 'rgba(255, 255, 255, 0.9)' : '#1A1A1A',
+                  '&:hover': { bgcolor: (hasPendingRedemption || !userData?.isEmailVerified) ? '#A17A00' : '#FFD54F' },
                   '&.Mui-disabled': {
                     bgcolor: '#A17A00',
-                    color: 'rgba(255, 255, 255, 0.9)'
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    opacity: 0.8
                   },
                   borderRadius: 2,
-                  boxShadow: hasPendingRedemption ? 'none' : '0 0 20px rgba(255, 193, 7, 0.4)',
-                  animation: hasPendingRedemption ? 'none' : 'pulse 2s infinite'
+                  boxShadow: (hasPendingRedemption || !userData?.isEmailVerified) ? 'none' : '0 0 20px rgba(255, 193, 7, 0.4)',
+                  animation: (hasPendingRedemption || !userData?.isEmailVerified) ? 'none' : 'pulse 2s infinite'
                 }}
               >
-                {hasPendingRedemption ? 'Canje Solicitado' : '¡Canjear Hamburguesa Gratis!'}
+                {!userData?.isEmailVerified 
+                  ? 'Verificá tu correo para canjear' 
+                  : hasPendingRedemption ? 'Canje Solicitado' : '¡Canjear Hamburguesa Gratis!'}
               </Button>
             </Box>
           )}
@@ -215,16 +218,21 @@ export default function DashboardPage() {
           variant="contained"
           color="primary"
           size="large"
+          disabled={!userData?.isEmailVerified}
           startIcon={<QrCodeScannerIcon />}
           onClick={() => setScannerOpen(true)}
           sx={{
             py: { xs: 1.5, sm: 2 },
             fontSize: '1.1rem',
             color: '#1A1A1A',
-            borderRadius: 2
+            borderRadius: 2,
+            '&.Mui-disabled': {
+              bgcolor: 'rgba(255, 193, 7, 0.3)',
+              color: 'rgba(0, 0, 0, 0.26)'
+            }
           }}
         >
-          Escaneá el código
+          {!userData?.isEmailVerified ? 'Verificá tu correo para sumar' : 'Escaneá el código'}
         </Button>
       </Box>
 
@@ -237,21 +245,21 @@ export default function DashboardPage() {
         <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>¿Canjeamos tu hamburguesa gratis?</DialogTitle>
         <DialogContent>
           <DialogContentText textAlign="center">
-            Estás por pedir tu hamburguesa gratis. <br/>
+            Estás por pedir tu hamburguesa gratis. <br />
             <strong>Avisá en caja para que lo procesen.</strong>
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center', px: 3, pb: 2, gap: 1 }}>
-          <Button 
-            onClick={() => setRedeemOpen(false)} 
+          <Button
+            onClick={() => setRedeemOpen(false)}
             disabled={redeemMutation.isPending}
             sx={{ fontWeight: 'bold' }}
           >
             Cancelar
           </Button>
-          <Button 
-            onClick={handleRedeem} 
-            variant="contained" 
+          <Button
+            onClick={handleRedeem}
+            variant="contained"
             disabled={redeemMutation.isPending}
             sx={{ borderRadius: 2, px: 3, fontWeight: 'bold', color: '#1A1A1A' }}
           >
@@ -260,9 +268,9 @@ export default function DashboardPage() {
         </DialogActions>
       </Dialog>
 
-      <QRScannerDialog 
-        open={scannerOpen} 
-        onClose={() => setScannerOpen(false)} 
+      <QRScannerDialog
+        open={scannerOpen}
+        onClose={() => setScannerOpen(false)}
         onScanSuccess={handleScanSuccess}
         isProcessing={isProcessingScan}
       />
