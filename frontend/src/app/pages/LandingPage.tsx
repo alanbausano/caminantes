@@ -322,8 +322,18 @@ export default function LandingPage() {
                   helperText={formErrors.dob}
                   value={formData.dob}
                   onChange={handleInputChange}
-                  inputProps={{ style: { textAlign: 'left', paddingLeft: 10, marginRight: 10 } }}
-                  sx={{ '& input[type="date"]::-webkit-date-and-time-value': { textAlign: 'left' } }}
+                  inputProps={{
+                    style: {
+                      textAlign: 'left',
+                      paddingLeft: 10,
+                      marginRight: 10,
+                      // Detect iOS to apply specific formatting
+                      ...(typeof navigator !== 'undefined' && /iPhone|iPad|iPod/.test(navigator.userAgent) ? {
+                        height: 50,
+                      } : {})
+                    }
+                  }}
+                  sx={{ '& input[type="date"]::-webkit-date-and-time-value': { textAlign: 'left', paddingTop: (typeof navigator !== 'undefined' && /iPhone|iPad|iPod/.test(navigator.userAgent) ? 2 : 0) } }}
                 />
               )}
               <TextField
