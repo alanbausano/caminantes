@@ -15,11 +15,15 @@ const {
 } = process.env;
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // Use SSL/TLS
   auth: {
     user: SMTP_USER,
     pass: SMTP_PASS,
   },
+  socketTimeout: 10000, // 10 seconds
+  connectionTimeout: 10000,
 });
 
 console.log(`[MailService] Using FRONTEND_URL: ${process.env.FRONTEND_URL || 'http://localhost:5173 (Default)'}`);
