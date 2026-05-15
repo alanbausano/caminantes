@@ -15,30 +15,26 @@ const {
 } = process.env;
 
 const transporter = nodemailer.createTransport({
-  host: SMTP_HOST,
-  port: parseInt(SMTP_PORT || '587'),
-  secure: SMTP_PORT === '465',
+  service: 'gmail',
   auth: {
     user: SMTP_USER,
     pass: SMTP_PASS,
   },
-  tls: {
-    rejectUnauthorized: false
-  }
 });
 
 console.log(`[MailService] Using FRONTEND_URL: ${process.env.FRONTEND_URL || 'http://localhost:5173 (Default)'}`);
 
-if (SMTP_HOST && SMTP_USER && SMTP_PASS) {
+if (SMTP_USER && SMTP_PASS) {
   transporter.verify((error) => {
     if (error) {
       console.error('[MailService] SMTP Connection Error:', error);
+      console.error('[MailService] Make sure you are using a Google App Password, NOT your normal password.');
     } else {
       console.log('[MailService] SMTP Connection Verified ✓ - Ready to send emails');
     }
   });
 } else {
-  console.warn('[MailService] SMTP is NOT configured. Check your .env variables.');
+  console.warn('[MailService] SMTP is NOT configured. Check your production environment variables (SMTP_USER, SMTP_PASS).');
 }
 
 const DEFAULT_FROM = SMTP_FROM ?? `Los Caminantes Burger <${SMTP_USER}>`;
@@ -62,6 +58,7 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions): Promis
   }
 
   try {
+    console.log(`[MailService] Attempting to send email to: ${to}...`);
     const info = await transporter.sendMail({
       from: DEFAULT_FROM,
       to,
